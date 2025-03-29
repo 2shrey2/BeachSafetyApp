@@ -178,7 +178,3 @@ If you're starting with an empty database, you'll need to:
 1. Create a first admin user through the registration endpoint
 2. Add some initial beach data using the beaches API
 3. Wait for the scheduled task to fetch weather data, or trigger it manually
-
-## License
-
-MIT 
