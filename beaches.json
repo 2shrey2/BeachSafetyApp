@@ -1,0 +1,167 @@
+[
+  {
+    "name": "Dwarka Beach",
+    "description": "A sacred beach near the famous Dwarkadhish Temple in Gujarat.",
+    "latitude": 22.2394,
+    "longitude": 68.9671,
+    "state": "Gujarat",
+    "city": "Dwarka",
+    "is_active": true,
+    "image_url": "https://example.com/dwarka_beach.jpg",
+    "id": 1
+  },
+  {
+    "name": "Chorwad Beach",
+    "description": "A serene beach in Gujarat, known for its peaceful surroundings.",
+    "latitude": 21.0159,
+    "longitude": 70.2206,
+    "state": "Gujarat",
+    "city": "Chorwad",
+    "is_active": true,
+    "image_url": "https://example.com/chorwad_beach.jpg",
+    "id": 2
+  },
+  {
+    "name": "Somnath Beach",
+    "description": "A scenic beach near the famous Somnath Temple in Gujarat.",
+    "latitude": 20.8880,
+    "longitude": 70.4012,
+    "state": "Gujarat",
+    "city": "Somnath",
+    "is_active": true,
+    "image_url": "https://example.com/somnath_beach.jpg",
+    "id": 3
+  },
+  {
+    "name": "Juhu Beach",
+    "description": "A famous beach in Mumbai, known for its street food and Bollywood celebrity sightings.",
+    "latitude": 19.0968,
+    "longitude": 72.8265,
+    "state": "Maharashtra",
+    "city": "Mumbai",
+    "is_active": true,
+    "image_url": "https://example.com/juhu_beach.jpg",
+    "id": 4
+  },
+  {
+    "name": "Versova Beach",
+    "description": "A quieter beach in Mumbai, known for its fishing community and cleanliness drives.",
+    "latitude": 19.1378,
+    "longitude": 72.7985,
+    "state": "Maharashtra",
+    "city": "Mumbai",
+    "is_active": true,
+    "image_url": "https://example.com/versova_beach.jpg",
+    "id": 5
+  },
+  {
+    "name": "Baga Beach",
+    "description": "A lively beach in Goa, popular for its nightlife and water sports.",
+    "latitude": 15.5524,
+    "longitude": 73.7516,
+    "state": "Goa",
+    "city": "Baga",
+    "is_active": true,
+    "image_url": "https://example.com/baga_beach.jpg",
+    "id": 6
+  },
+  {
+    "name": "Anjuna Beach",
+    "description": "A popular beach in Goa, known for its trance parties and flea market.",
+    "latitude": 15.5873,
+    "longitude": 73.7438,
+    "state": "Goa",
+    "city": "Anjuna",
+    "is_active": true,
+    "image_url": "https://example.com/anjuna_beach.jpg",
+    "id": 7
+  },
+  {
+    "name": "Kovalam Beach",
+    "description": "A famous beach in Kerala, known for its lighthouse and surfing opportunities.",
+    "latitude": 8.4000,
+    "longitude": 76.9784,
+    "state": "Kerala",
+    "city": "Kovalam",
+    "is_active": true,
+    "image_url": "https://example.com/kovalam_beach.jpg",
+    "id": 8
+  },
+  {
+    "name": "Varkala Beach",
+    "description": "A beautiful cliffside beach in Kerala, also known as Papanasam Beach.",
+    "latitude": 8.7333,
+    "longitude": 76.7167,
+    "state": "Kerala",
+    "city": "Varkala",
+    "is_active": true,
+    "image_url": "https://example.com/varkala_beach.jpg",
+    "id": 9
+  },
+  {
+    "name": "Marina Beach",
+    "description": "A beautiful beach in Chennai",
+    "latitude": 13.0499,
+    "longitude": 80.282,
+    "state": "Tamil Nadu",
+    "city": "Chennai",
+    "is_active": true,
+    "image_url": "https://example.com/marina_beach.jpg",
+    "id": 10
+  },
+  {
+    "name": "Elliot's Beach",
+    "description": "A calm and serene beach in Chennai, also known as Besant Nagar Beach.",
+    "latitude": 12.9987,
+    "longitude": 80.2715,
+    "state": "Tamil Nadu",
+    "city": "Chennai",
+    "is_active": true,
+    "image_url": "https://example.com/elliots_beach.jpg",
+    "id": 11
+  },
+  {
+    "name": "Digha Beach",
+    "description": "A famous beach in West Bengal, known for its flat hard beaches and gentle waves.",
+    "latitude": 21.6278,
+    "longitude": 87.5090,
+    "state": "West Bengal",
+    "city": "Digha",
+    "is_active": true,
+    "image_url": "https://example.com/digha_beach.jpg",
+    "id": 12
+  },
+  {
+    "name": "Mandarmani Beach",
+    "description": "A long and less crowded beach in West Bengal, known for its scenic beauty.",
+    "latitude": 21.7696,
+    "longitude": 87.6689,
+    "state": "West Bengal",
+    "city": "Mandarmani",
+    "is_active": true,
+    "image_url": "https://example.com/mandarmani_beach.jpg",
+    "id": 13
+  },
+  {
+    "name": "Puri Beach",
+    "description": "A sacred beach near the Jagannath Temple in Odisha.",
+    "latitude": 19.7983,
+    "longitude": 85.8249,
+    "state": "Odisha",
+    "city": "Puri",
+    "is_active": true,
+    "image_url": "https://example.com/puri_beach.jpg",
+    "id": 14
+  },
+  {
+    "name": "Chandipur Beach",
+    "description": "A unique beach in Odisha, known for its disappearing sea phenomenon.",
+    "latitude": 21.4716,
+    "longitude": 87.0170,
+    "state": "Odisha",
+    "city": "Chandipur",
+    "is_active": true,
+    "image_url": "https://example.com/chandipur_beach.jpg",
+    "id": 15
+  }
+]
