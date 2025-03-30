@@ -14,7 +14,7 @@ class BeachService {
     String? category,
   }) async {
     final response = await _apiService.get(
-      AppConstants.ApiEndpoints.beaches,
+      ApiEndpoints.beaches,
       queryParameters: {
         'page': page,
         'page_size': pageSize,
@@ -31,7 +31,7 @@ class BeachService {
   // Get beach details by ID
   Future<Beach> getBeachDetails(String beachId) async {
     final response = await _apiService.get(
-      AppConstants.ApiEndpoints.beachDetails(beachId),
+      ApiEndpoints.beachDetails(beachId),
     );
     return Beach.fromJson(response['data']);
   }
@@ -39,7 +39,7 @@ class BeachService {
   // Get beach conditions
   Future<BeachConditions> getBeachConditions(String beachId) async {
     final response = await _apiService.get(
-      AppConstants.ApiEndpoints.beachConditions(beachId),
+      ApiEndpoints.beachConditions(beachId),
     );
     return BeachConditions.fromJson(response['data']);
   }
@@ -47,14 +47,14 @@ class BeachService {
   // Add beach to favorites
   Future<void> addToFavorites(String beachId) async {
     await _apiService.post(
-      AppConstants.ApiEndpoints.favoriteBeach(beachId),
+      ApiEndpoints.favoriteBeach(beachId),
     );
   }
 
   // Remove beach from favorites
   Future<void> removeFromFavorites(String beachId) async {
     await _apiService.delete(
-      AppConstants.ApiEndpoints.favoriteBeach(beachId),
+      ApiEndpoints.favoriteBeach(beachId),
     );
   }
 
@@ -65,7 +65,7 @@ class BeachService {
     double radius = 50.0, // in kilometers
   }) async {
     final response = await _apiService.get(
-      '${AppConstants.ApiEndpoints.beaches}/nearby',
+      '${ApiEndpoints.beaches}/nearby',
       queryParameters: {
         'lat': latitude,
         'lng': longitude,

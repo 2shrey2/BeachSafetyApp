@@ -14,7 +14,7 @@ class AuthService {
     required String password,
   }) async {
     final response = await _apiService.post(
-      AppConstants.ApiEndpoints.register,
+      ApiEndpoints.register,
       data: {
         'name': name,
         'email': email,
@@ -32,7 +32,7 @@ class AuthService {
     required String password,
   }) async {
     final response = await _apiService.post(
-      AppConstants.ApiEndpoints.login,
+      ApiEndpoints.login,
       data: {
         'email': email,
         'password': password,
@@ -46,17 +46,17 @@ class AuthService {
   // Save authentication tokens
   Future<void> _saveTokens(Map<String, dynamic> response) async {
     await _secureStorage.write(
-      key: AppConstants.StorageKeys.accessToken,
+      key: StorageKeys.accessToken,
       value: response['access_token'],
     );
     
     await _secureStorage.write(
-      key: AppConstants.StorageKeys.refreshToken,
+      key: StorageKeys.refreshToken,
       value: response['refresh_token'],
     );
     
     await _secureStorage.write(
-      key: AppConstants.StorageKeys.userId,
+      key: StorageKeys.userId,
       value: response['user']['id'],
     );
   }
@@ -64,16 +64,16 @@ class AuthService {
   // Check if user is logged in
   Future<bool> isLoggedIn() async {
     final token = await _secureStorage.read(
-      key: AppConstants.StorageKeys.accessToken,
+      key: StorageKeys.accessToken,
     );
     return token != null;
   }
 
   // Logout user
   Future<void> logout() async {
-    await _secureStorage.delete(key: AppConstants.StorageKeys.accessToken);
-    await _secureStorage.delete(key: AppConstants.StorageKeys.refreshToken);
-    await _secureStorage.delete(key: AppConstants.StorageKeys.userId);
-    await _secureStorage.delete(key: AppConstants.StorageKeys.userProfile);
+    await _secureStorage.delete(key: StorageKeys.accessToken);
+    await _secureStorage.delete(key: StorageKeys.refreshToken);
+    await _secureStorage.delete(key: StorageKeys.userId);
+    await _secureStorage.delete(key: StorageKeys.userProfile);
   }
 } 

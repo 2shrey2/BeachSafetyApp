@@ -184,8 +184,43 @@ class BeachProvider with ChangeNotifier {
     }
   }
 
-  // Get nearby beaches
-  Future<List<Beach>> getNearbyBeaches(double latitude, double longitude) async {
+  // Get nearby beaches with optional parameters
+  Future<void> getNearbyBeaches() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      if (_useMockData) {
+        // Use mock data for development
+        await Future.delayed(const Duration(seconds: 1)); // Simulate API delay
+        var mockBeaches = MockDataService.getMockBeaches();
+        
+        // Pretend these are sorted by proximity
+        mockBeaches.shuffle();
+        _beaches = mockBeaches.take(5).toList();
+      } else {
+        // Default location if actual location not available
+        const defaultLatitude = 34.0522; // Los Angeles
+        const defaultLongitude = -118.2437;
+        
+        final nearbyBeaches = await _beachService.getNearbyBeaches(
+          defaultLatitude,
+          defaultLongitude,
+        );
+        
+        _beaches = nearbyBeaches;
+      }
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Get nearby beaches with specific coordinates
+  Future<List<Beach>> getNearbyBeachesWithCoordinates(double latitude, double longitude) async {
     _isLoading = true;
     _error = null;
     notifyListeners();

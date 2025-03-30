@@ -22,7 +22,7 @@ class ApiService {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           // Add auth token to headers if available
-          final token = await _secureStorage.read(key: AppConstants.StorageKeys.accessToken);
+          final token = await _secureStorage.read(key: StorageKeys.accessToken);
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
@@ -33,19 +33,19 @@ class ApiService {
             try {
               // Try to refresh the token
               final refreshToken = await _secureStorage.read(
-                key: AppConstants.StorageKeys.refreshToken,
+                key: StorageKeys.refreshToken,
               );
               
               if (refreshToken != null) {
                 final response = await _dio.post(
-                  AppConstants.ApiEndpoints.refreshToken,
+                  ApiEndpoints.refreshToken,
                   data: {'refresh_token': refreshToken},
                 );
                 
                 if (response.statusCode == 200) {
                   final newToken = response.data['access_token'];
                   await _secureStorage.write(
-                    key: AppConstants.StorageKeys.accessToken,
+                    key: StorageKeys.accessToken,
                     value: newToken,
                   );
                   

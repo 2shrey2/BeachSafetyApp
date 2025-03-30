@@ -168,10 +168,10 @@ class MockDataService {
         title: 'Dangerous Conditions',
         message: 'Bondi Beach has been marked as dangerous due to high waves and strong currents.',
         timestamp: DateTime.now().subtract(const Duration(hours: 2)),
-        type: 'alert',
+        type: NotificationType.beachAlert,
         isRead: false,
         data: {
-          'beach_id': '4',
+          'beachId': '4',
         },
       ),
       UserNotification(
@@ -179,10 +179,10 @@ class MockDataService {
         title: 'Weather Update',
         message: 'Weather at Mount Fuji is improving. The beach is now marked as safe.',
         timestamp: DateTime.now().subtract(const Duration(days: 1)),
-        type: 'info',
+        type: NotificationType.weatherUpdate,
         isRead: true,
         data: {
-          'beach_id': '2',
+          'beachId': '2',
         },
       ),
       UserNotification(
@@ -190,10 +190,10 @@ class MockDataService {
         title: 'Favorite Beach Update',
         message: 'Waikiki Beach conditions have changed from safe to moderate. Exercise caution.',
         timestamp: DateTime.now().subtract(const Duration(days: 2)),
-        type: 'warning',
+        type: NotificationType.systemMessage,
         isRead: true,
         data: {
-          'beach_id': '5',
+          'beachId': '5',
         },
       ),
     ];

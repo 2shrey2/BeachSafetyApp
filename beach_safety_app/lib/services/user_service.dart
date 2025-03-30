@@ -10,7 +10,7 @@ class UserService {
   // Get user profile
   Future<User> getUserProfile() async {
     final response = await _apiService.get(
-      AppConstants.ApiEndpoints.userProfile,
+      ApiEndpoints.userProfile,
     );
     
     final user = User.fromJson(response['data']);
@@ -18,7 +18,7 @@ class UserService {
     // Cache user profile
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(
-      AppConstants.StorageKeys.userProfile,
+      StorageKeys.userProfile,
       response['data'].toString(),
     );
     
@@ -33,7 +33,7 @@ class UserService {
     Map<String, bool>? notificationPreferences,
   }) async {
     final response = await _apiService.put(
-      AppConstants.ApiEndpoints.userProfile,
+      ApiEndpoints.userProfile,
       data: {
         if (name != null) 'name': name,
         if (email != null) 'email': email,
@@ -48,7 +48,7 @@ class UserService {
   // Get user notifications
   Future<List<UserNotification>> getUserNotifications() async {
     final response = await _apiService.get(
-      AppConstants.ApiEndpoints.userNotifications,
+      ApiEndpoints.userNotifications,
     );
     
     List<dynamic> notificationsJson = response['data'];
@@ -58,14 +58,14 @@ class UserService {
   // Mark notification as read
   Future<void> markNotificationAsRead(String notificationId) async {
     await _apiService.put(
-      '${AppConstants.ApiEndpoints.userNotifications}/$notificationId/read',
+      '${ApiEndpoints.userNotifications}/$notificationId/read',
     );
   }
 
   // Update user location
   Future<void> updateUserLocation(double latitude, double longitude) async {
     await _apiService.put(
-      AppConstants.ApiEndpoints.userProfile,
+      ApiEndpoints.userProfile,
       data: {
         'latitude': latitude,
         'longitude': longitude,
