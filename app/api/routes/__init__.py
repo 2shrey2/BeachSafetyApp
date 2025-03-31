@@ -4,6 +4,7 @@ from app.db.session import get_db
 from app.db.redis import get_redis_connection
 from app.services.stormglass import StormGlassService
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 import traceback
 
 api_router = APIRouter()
@@ -24,7 +25,7 @@ async def health_check(db: Session = Depends(get_db)):
         db_status = "ok"
         detail = None
         try:
-            result = db.execute("SELECT 1").scalar()
+            result = db.execute(text("SELECT 1")).scalar()
             if result != 1:
                 db_status = "error"
                 detail = "Unexpected query result"
