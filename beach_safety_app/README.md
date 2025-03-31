@@ -1,6 +1,7 @@
 # beach_safety_app
 
 A new Flutter project.
+This is the frontend Folder for this project.
 
 ## Getting Started
 
