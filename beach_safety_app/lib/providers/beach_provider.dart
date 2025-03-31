@@ -185,7 +185,7 @@ class BeachProvider with ChangeNotifier {
   }
 
   // Get nearby beaches with optional parameters
-  Future<void> getNearbyBeaches() async {
+  Future<void> getNearbyBeaches({double? latitude, double? longitude}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -198,15 +198,15 @@ class BeachProvider with ChangeNotifier {
         
         // Pretend these are sorted by proximity
         mockBeaches.shuffle();
-        _beaches = mockBeaches.take(5).toList();
+        _beaches = mockBeaches.take(8).toList();
       } else {
         // Default location if actual location not available
-        const defaultLatitude = 34.0522; // Los Angeles
-        const defaultLongitude = -118.2437;
+        final double defaultLatitude = 34.0522; // Los Angeles
+        final double defaultLongitude = -118.2437;
         
         final nearbyBeaches = await _beachService.getNearbyBeaches(
-          defaultLatitude,
-          defaultLongitude,
+          latitude ?? defaultLatitude,
+          longitude ?? defaultLongitude,
         );
         
         _beaches = nearbyBeaches;
@@ -219,7 +219,7 @@ class BeachProvider with ChangeNotifier {
     }
   }
 
-  // Get nearby beaches with specific coordinates
+  // Get nearby beaches with specific coordinates (returns list without updating state)
   Future<List<Beach>> getNearbyBeachesWithCoordinates(double latitude, double longitude) async {
     _isLoading = true;
     _error = null;
@@ -252,6 +252,39 @@ class BeachProvider with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
       return [];
+    }
+  }
+
+  // Get favorite beaches
+  Future<void> getFavoriteBeaches() async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      if (_useMockData) {
+        // Use mock data for development
+        await Future.delayed(const Duration(seconds: 1)); // Simulate API delay
+        var mockBeaches = MockDataService.getMockBeaches();
+        
+        // Filter to only favorite beaches
+        final favoriteIds = MockDataService.getMockUser().favoriteBeachIds;
+        mockBeaches = mockBeaches.where((beach) => favoriteIds.contains(beach.id)).toList();
+        
+        // Mark them as favorites
+        mockBeaches = mockBeaches.map((beach) => beach.copyWith(isFavorite: true)).toList();
+        
+        _beaches = mockBeaches;
+      } else {
+        // Use real API
+        final favoriteBeaches = await _beachService.getFavoriteBeaches();
+        _beaches = favoriteBeaches;
+      }
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 

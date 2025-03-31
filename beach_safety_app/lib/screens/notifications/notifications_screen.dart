@@ -6,6 +6,7 @@ import '../../models/notification_model.dart';
 import '../../providers/user_provider.dart';
 import '../../widgets/loading_indicator.dart';
 import '../../routes/app_routes.dart';
+import '../../screens/beach/beach_details_screen.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({Key? key}) : super(key: key);
@@ -150,16 +151,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           if (notification.type == NotificationType.beachAlert && 
               notification.data != null &&
               notification.data!.containsKey('beachId')) {
-            Navigator.of(context).pushNamed(
-              AppRoutes.beachDetails,
-              arguments: notification.data!['beachId'],
+            AppRoutes.navigateToBeachDetails(
+              context,
+              notification.data!['beachId'],
             );
           }
         },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(
-            color: notification.isRead ? null : AppTheme.primaryColorLight.withOpacity(0.1),
+            color: notification.isRead ? null : AppTheme.primaryColor.withOpacity(0.1),
             border: Border(
               bottom: BorderSide(
                 color: Colors.grey.withOpacity(0.2),

@@ -76,4 +76,14 @@ class BeachService {
     List<dynamic> beachesJson = response['data'];
     return beachesJson.map((json) => Beach.fromJson(json)).toList();
   }
+
+  // Get favorite beaches for the current user
+  Future<List<Beach>> getFavoriteBeaches() async {
+    final response = await _apiService.get(
+      ApiEndpoints.favoriteBeaches,
+    );
+
+    List<dynamic> beachesJson = response['data'];
+    return beachesJson.map((json) => Beach.fromJson(json)).toList();
+  }
 } 

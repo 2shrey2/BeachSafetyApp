@@ -166,7 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           backgroundImage: user.profileImageUrl != null
                               ? NetworkImage(user.profileImageUrl!)
                               : null,
-                          backgroundColor: AppTheme.primaryColorLight,
+                          backgroundColor: AppTheme.primaryColor.withOpacity(0.7),
                           child: user.profileImageUrl == null
                               ? Text(
                                   user.name.isNotEmpty
@@ -255,6 +255,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     'beachEvents',
                   ),
                   const SizedBox(height: 24),
+                  const Text(
+                    'Quick Access',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  InkWell(
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRoutes.favorites);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(
+                              Icons.favorite,
+                              color: AppTheme.primaryColor,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          const Expanded(
+                            child: Text(
+                              'Favorite Beaches',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
+                          const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                            color: Colors.grey,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
                   if (_isEditing)
                     SizedBox(
                       width: double.infinity,
@@ -312,7 +371,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         labelText: label,
         border: const OutlineInputBorder(),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: AppTheme.primaryColorLight),
+          borderSide: BorderSide(color: AppTheme.primaryColor.withOpacity(0.5)),
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),

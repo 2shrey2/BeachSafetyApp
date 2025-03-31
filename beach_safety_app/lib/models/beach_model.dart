@@ -86,6 +86,8 @@ class Beach {
       rating: rating ?? this.rating,
     );
   }
+
+  String get safetyStatus => currentConditions?.safetyStatus ?? 'unknown';
 }
 
 class BeachConditions {

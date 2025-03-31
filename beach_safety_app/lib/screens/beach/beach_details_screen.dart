@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../constants/app_theme.dart';
 import '../../models/beach_model.dart';
 import '../../providers/beach_provider.dart';
+import '../../widgets/loading_indicator.dart';
 
 class BeachDetailsScreen extends StatefulWidget {
   final String beachId;
@@ -45,15 +46,64 @@ class _BeachDetailsScreenState extends State<BeachDetailsScreen> with SingleTick
       body: Consumer<BeachProvider>(
         builder: (context, beachProvider, child) {
           if (beachProvider.isLoading && beachProvider.selectedBeach == null) {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return Center(
+              child: LoadingIndicator(
+                message: 'Loading beach details...',
+              ),
             );
           }
 
           final beach = beachProvider.selectedBeach;
           if (beach == null) {
-            return const Center(
-              child: Text('Beach not found'),
+            return Scaffold(
+              appBar: AppBar(
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                title: const Text('Beach Details'),
+              ),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: Colors.red.withOpacity(0.7),
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Beach not found',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Text(
+                        beachProvider.error ?? 'Could not load beach details',
+                        style: TextStyle(
+                          color: AppTheme.textSecondaryColor,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primaryColor,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      ),
+                      child: const Text('Go Back'),
+                    ),
+                  ],
+                ),
+              ),
             );
           }
 
@@ -64,6 +114,34 @@ class _BeachDetailsScreenState extends State<BeachDetailsScreen> with SingleTick
                 expandedHeight: 250,
                 pinned: true,
                 backgroundColor: AppTheme.primaryColor,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                actions: [
+                  IconButton(
+                    icon: Icon(
+                      beach.isFavorite ? Icons.favorite : Icons.favorite_border,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Provider.of<BeachProvider>(context, listen: false)
+                          .toggleFavorite(beach.id);
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.share, color: Colors.white),
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Share feature coming soon!'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                ],
                 flexibleSpace: FlexibleSpaceBar(
                   background: Stack(
                     fit: StackFit.expand,
@@ -124,11 +202,15 @@ class _BeachDetailsScreenState extends State<BeachDetailsScreen> with SingleTick
                                   size: 16,
                                 ),
                                 const SizedBox(width: 4),
-                                Text(
-                                  beach.location,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
+                                Expanded(
+                                  child: Text(
+                                    beach.location,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                               ],
@@ -139,28 +221,6 @@ class _BeachDetailsScreenState extends State<BeachDetailsScreen> with SingleTick
                     ],
                   ),
                 ),
-                actions: [
-                  // Favorite Button
-                  IconButton(
-                    icon: Icon(
-                      beach.isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: beach.isFavorite ? Colors.red : Colors.white,
-                    ),
-                    onPressed: () {
-                      beachProvider.toggleFavorite(beach.id);
-                    },
-                  ),
-                  // Share Button
-                  IconButton(
-                    icon: const Icon(
-                      Icons.share,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      // Implement share functionality
-                    },
-                  ),
-                ],
               ),
               
               // Beach Information

@@ -41,6 +41,7 @@ class ApiEndpoints {
   static String beachDetails(String beachId) => '/beaches/$beachId';
   static String beachConditions(String beachId) => '/beaches/$beachId/conditions';
   static String favoriteBeach(String beachId) => '/beaches/$beachId/favorite';
+  static const String favoriteBeaches = '/users/me/favorites';
   
   // User Endpoints
   static const String userProfile = '/users/me';

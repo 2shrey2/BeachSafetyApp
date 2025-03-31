@@ -4,6 +4,8 @@ import '../../constants/app_theme.dart';
 import '../../providers/beach_provider.dart';
 import '../../widgets/beach_card.dart';
 import '../../routes/app_routes.dart';
+import '../../widgets/loading_indicator.dart';
+import '../../screens/beach/beach_details_screen.dart';
 import 'widgets/category_tab.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,8 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   final List<String> _categories = ['Most Viewed', 'Nearby', 'Safest', 'Latest'];
   int _selectedCategoryIndex = 0;
-  int _currentIndex = 0; // For bottom navigation bar
-
+  
   @override
   void initState() {
     super.initState();
@@ -206,7 +207,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context, beachProvider, child) {
                   if (beachProvider.isLoading && beachProvider.beaches.isEmpty) {
                     return const Center(
-                      child: CircularProgressIndicator(),
+                      child: LoadingIndicator(
+                        message: "Loading beaches...",
+                        withShimmer: true,
+                      ),
                     );
                   }
 
@@ -253,7 +257,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       // Show loading indicator at the end when loading more beaches
                       if (index == beachProvider.beaches.length) {
                         return const Center(
-                          child: CircularProgressIndicator(),
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+                            strokeWidth: 3,
+                          ),
                         );
                       }
 
@@ -261,10 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       return BeachCard(
                         beach: beach,
                         onTap: () {
-                          Navigator.of(context).pushNamed(
-                            AppRoutes.beachDetails,
-                            arguments: beach.id,
-                          );
+                          AppRoutes.navigateToBeachDetails(context, beach.id);
                         },
                         onFavoriteTap: () {
                           beachProvider.toggleFavorite(beach.id);
@@ -277,36 +281,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: AppTheme.primaryColor,
-        unselectedItemColor: AppTheme.textLightColor,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
       ),
     );
   }

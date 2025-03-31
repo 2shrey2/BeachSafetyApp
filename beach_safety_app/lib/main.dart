@@ -27,6 +27,8 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.lightTheme(),
         initialRoute: AppRoutes.splash,
         routes: AppRoutes.getRoutes(),
+        onGenerateRoute: AppRoutes.onGenerateRoute,
+        navigatorObservers: [RouteObserver<PageRoute>()],
       ),
     );
   }
