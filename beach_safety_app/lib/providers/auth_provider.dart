@@ -7,15 +7,15 @@ import 'user_provider.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
-  
+
   User? _user;
   bool _isLoading = false;
   String? _error;
   bool _isLoggedIn = false;
-  
+
   // Context for updating UserProvider
   late BuildContext? _context;
-  
+
   void setContext(BuildContext context) {
     _context = context;
   }
@@ -59,7 +59,7 @@ class AuthProvider with ChangeNotifier {
         password: password,
       );
       _isLoggedIn = true;
-      
+
       // Update user provider with new user data
       final ctx = context ?? _context;
       if (ctx != null && _user != null) {
@@ -69,7 +69,7 @@ class AuthProvider with ChangeNotifier {
           print('Failed to update UserProvider: $e');
         }
       }
-      
+
       return true;
     } catch (e) {
       _error = e.toString().replaceAll('Exception: ', '');
@@ -96,7 +96,7 @@ class AuthProvider with ChangeNotifier {
         password: password,
       );
       _isLoggedIn = true;
-      
+
       // Update user provider with new user data
       final ctx = context ?? _context;
       if (ctx != null && _user != null) {
@@ -106,7 +106,7 @@ class AuthProvider with ChangeNotifier {
           print('Failed to update UserProvider: $e');
         }
       }
-      
+
       return true;
     } catch (e) {
       _error = e.toString().replaceAll('Exception: ', '');
@@ -139,4 +139,4 @@ class AuthProvider with ChangeNotifier {
     _error = null;
     notifyListeners();
   }
-} 
+}

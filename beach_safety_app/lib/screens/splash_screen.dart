@@ -11,7 +11,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
@@ -20,28 +21,28 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    
+
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     );
-    
+
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.0, 0.7, curve: Curves.easeIn),
       ),
     );
-    
+
     _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
         curve: const Interval(0.0, 0.7, curve: Curves.easeOut),
       ),
     );
-    
+
     _controller.forward();
-    
+
     // Show options after animation
     Future.delayed(const Duration(milliseconds: 2000), () {
       if (mounted) {
@@ -84,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
               painter: WavePainter(),
             ),
           ),
-          
+
           // Main content
           Center(
             child: AnimatedBuilder(
@@ -134,7 +135,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                           ),
                         ),
                         const SizedBox(height: 60),
-                        
+
                         // Login and Register Options
                         if (_showOptions) ...[
                           Padding(
@@ -146,7 +147,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.white,
                                     foregroundColor: AppTheme.primaryColor,
-                                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 50, vertical: 15),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
@@ -169,8 +171,10 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                                   onPressed: _navigateToRegister,
                                   style: OutlinedButton.styleFrom(
                                     foregroundColor: Colors.white,
-                                    side: const BorderSide(color: Colors.white, width: 2),
-                                    padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                                    side: const BorderSide(
+                                        color: Colors.white, width: 2),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 50, vertical: 15),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(30),
                                     ),
@@ -192,7 +196,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                           ),
                         ] else ...[
                           const CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
                             strokeWidth: 3,
                           ),
                         ],
@@ -265,4 +270,4 @@ class WavePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-} 
+}
