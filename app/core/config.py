@@ -16,6 +16,13 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
         "http://localhost:3000",
         "http://localhost:8000",
+        "http://localhost:5000",
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:8000", 
+        "http://127.0.0.1:5000",
+        "http://10.0.2.2:3000",  # Android emulator special IP
+        "http://10.0.2.2:8000",  # Android emulator special IP
+        "http://10.0.2.2:5000",  # Android emulator special IP
     ]
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)

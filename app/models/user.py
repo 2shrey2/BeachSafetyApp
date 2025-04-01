@@ -7,7 +7,7 @@ class User(BaseModel):
     """User model for storing user information"""
     email = Column(String(255), nullable=False, unique=True, index=True)
     hashed_password = Column(String(255), nullable=False)
-    full_name = Column(String(100), nullable=True)
+    full_name = Column(String(100), nullable=False)
     is_active = Column(Boolean, default=True)
     is_admin = Column(Boolean, default=False)
     

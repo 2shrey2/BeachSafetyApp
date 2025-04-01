@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../constants/app_theme.dart';
+import '../providers/user_provider.dart';
 import 'home/home_screen.dart';
 import 'profile/profile_screen.dart';
 import 'notifications/notifications_screen.dart';
@@ -26,6 +28,16 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
   final PageController _pageController = PageController();
 
   @override
+  void initState() {
+    super.initState();
+    
+    // Load user data
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UserProvider>(context, listen: false).getUserProfile();
+    });
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
@@ -45,8 +57,8 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      onPopInvoked: (didPop) {
         // If we're not on the first tab, go to first tab instead of exiting
         if (_currentIndex != 0) {
           setState(() => _currentIndex = 0);
@@ -55,7 +67,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
             duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
           );
-          return false;
+          return;
         }
         
         // Double back to exit
@@ -69,10 +81,9 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
               duration: Duration(seconds: 2),
             ),
           );
-          return false;
         }
-        return true;
       },
+      canPop: false,
       child: Scaffold(
         body: PageView(
           controller: _pageController,
@@ -86,7 +97,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
           decoration: BoxDecoration(
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 spreadRadius: 0,
                 blurRadius: 10,
                 offset: const Offset(0, -3),
@@ -120,7 +131,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryColor.withOpacity(0.1) : Colors.transparent,
+          color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.1) : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(

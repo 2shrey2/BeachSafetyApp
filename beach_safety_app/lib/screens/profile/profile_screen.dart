@@ -5,6 +5,9 @@ import '../../providers/user_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../routes/app_routes.dart';
 import '../../widgets/loading_indicator.dart';
+import 'package:flutter/foundation.dart';
+import '../../constants/app_constants.dart';
+import '../../services/api_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -158,103 +161,146 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Center(
-                    child: Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: 60,
-                          backgroundImage: user.profileImageUrl != null
-                              ? NetworkImage(user.profileImageUrl!)
-                              : null,
-                          backgroundColor: AppTheme.primaryColor.withOpacity(0.7),
-                          child: user.profileImageUrl == null
-                              ? Text(
-                                  user.name.isNotEmpty
-                                      ? user.name[0].toUpperCase()
-                                      : '?',
-                                  style: const TextStyle(
-                                    fontSize: 40,
-                                    color: Colors.white,
+                  // Profile Card with User Info
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Left side - Profile Image
+                          Stack(
+                            children: [
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundImage: user.profileImageUrl != null
+                                    ? NetworkImage(user.profileImageUrl!)
+                                    : null,
+                                backgroundColor: AppTheme.primaryColor.withOpacity(0.7),
+                                child: user.profileImageUrl == null
+                                    ? Text(
+                                        user.name.isNotEmpty
+                                            ? user.name[0].toUpperCase()
+                                            : '?',
+                                        style: const TextStyle(
+                                          fontSize: 35,
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : null,
+                              ),
+                              if (_isEditing)
+                                Positioned(
+                                  right: 0,
+                                  bottom: 0,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(4),
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.primaryColor,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.camera_alt,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
                                   ),
-                                )
-                              : null,
-                        ),
-                        if (_isEditing)
-                          Positioned(
-                            right: 0,
-                            bottom: 0,
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: AppTheme.primaryColor,
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.camera_alt,
-                                color: Colors.white,
-                                size: 20,
-                              ),
+                                ),
+                            ],
+                          ),
+                          const SizedBox(width: 20),
+                          // Right side - User Details
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (!_isEditing) ...[
+                                  Text(
+                                    _nameController.text,
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.email_outlined, size: 16, color: Colors.grey),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        _emailController.text,
+                                        style: const TextStyle(
+                                          color: Colors.grey,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  if (_locationController.text.isNotEmpty) ...[
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.location_on_outlined, size: 16, color: Colors.grey),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          _locationController.text,
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ] else ...[
+                                  _buildTextField(
+                                    label: 'Name',
+                                    controller: _nameController,
+                                    enabled: _isEditing,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter your name';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildTextField(
+                                    label: 'Email',
+                                    controller: _emailController,
+                                    enabled: _isEditing,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please enter your email';
+                                      }
+                                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                          .hasMatch(value)) {
+                                        return 'Please enter a valid email';
+                                      }
+                                      return null;
+                                    },
+                                  ),
+                                  const SizedBox(height: 16),
+                                  _buildTextField(
+                                    label: 'Location',
+                                    controller: _locationController,
+                                    enabled: _isEditing,
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),
-                  _buildTextField(
-                    label: 'Name',
-                    controller: _nameController,
-                    enabled: _isEditing,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your name';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  _buildTextField(
-                    label: 'Email',
-                    controller: _emailController,
-                    enabled: _isEditing,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                          .hasMatch(value)) {
-                        return 'Please enter a valid email';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                  _buildTextField(
-                    label: 'Location',
-                    controller: _locationController,
-                    enabled: _isEditing,
-                  ),
-                  const SizedBox(height: 24),
-                  const Text(
-                    'Notification Preferences',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  _buildNotificationPreferenceToggle(
-                    'Weather Updates',
-                    'weatherUpdates',
-                  ),
-                  _buildNotificationPreferenceToggle(
-                    'Safety Alerts',
-                    'safetyAlerts',
-                  ),
-                  _buildNotificationPreferenceToggle(
-                    'Beach Events',
-                    'beachEvents',
-                  ),
-                  const SizedBox(height: 24),
+
+                  // Quick Access Section
                   const Text(
                     'Quick Access',
                     style: TextStyle(
@@ -263,71 +309,159 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, AppRoutes.favorites);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: AppTheme.primaryColor.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Icon(
-                              Icons.favorite,
-                              color: AppTheme.primaryColor,
-                              size: 24,
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          const Expanded(
-                            child: Text(
-                              'Favorite Beaches',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
+                  Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, AppRoutes.favorites);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: AppTheme.primaryColor.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Icon(
+                                Icons.favorite,
+                                color: AppTheme.primaryColor,
+                                size: 24,
                               ),
                             ),
+                            const SizedBox(width: 16),
+                            const Expanded(
+                              child: Text(
+                                'Favorite Beaches',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: Colors.grey,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Notification Preferences Section
+                  Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Notification Preferences',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          const Icon(
-                            Icons.arrow_forward_ios,
-                            size: 16,
-                            color: Colors.grey,
+                          const SizedBox(height: 8),
+                          _buildNotificationPreferenceToggle(
+                            'Weather Updates',
+                            'weatherUpdates',
+                          ),
+                          _buildNotificationPreferenceToggle(
+                            'Safety Alerts',
+                            'safetyAlerts',
+                          ),
+                          _buildNotificationPreferenceToggle(
+                            'Beach Events',
+                            'beachEvents',
                           ),
                         ],
                       ),
                     ),
                   ),
                   const SizedBox(height: 24),
+
+                  // Settings Section
+                  Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      children: [
+                        buildSettingsTile(
+                          context,
+                          'Notification Settings',
+                          Icons.notifications_outlined,
+                          () {
+                            // Navigate to notification settings
+                          },
+                        ),
+                        const Divider(height: 1),
+                        buildSettingsTile(
+                          context,
+                          'Security & Privacy',
+                          Icons.security_outlined,
+                          () {
+                            // Navigate to security settings
+                          },
+                        ),
+                        const Divider(height: 1),
+                        buildSettingsTile(
+                          context,
+                          'Help & Support',
+                          Icons.help_outline,
+                          () {
+                            // Navigate to help
+                          },
+                        ),
+                        if (kDebugMode) ...[
+                          const Divider(height: 1),
+                          buildSettingsTile(
+                            context,
+                            'Developer Options',
+                            Icons.developer_mode,
+                            () {
+                              _showDeveloperOptions(context);
+                            },
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Action Buttons
                   if (_isEditing)
                     SizedBox(
                       width: double.infinity,
-                      child: ElevatedButton(
+                      child: ElevatedButton.icon(
                         onPressed: _saveProfile,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryColor,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: const Text(
+                        icon: const Icon(Icons.save, color: Colors.white),
+                        label: const Text(
                           'Save Changes',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.primaryColor,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
                       ),
@@ -335,20 +469,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
-                    child: TextButton(
+                    child: ElevatedButton.icon(
                       onPressed: _logout,
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child: const Text(
+                      icon: const Icon(Icons.logout, color: Colors.white),
+                      label: const Text(
                         'Logout',
                         style: TextStyle(
                           fontSize: 16,
-                          color: Colors.red,
+                          color: Colors.white,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
                   ),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
@@ -371,7 +511,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         labelText: label,
         border: const OutlineInputBorder(),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: AppTheme.primaryColor.withOpacity(0.5)),
+          borderSide: BorderSide(color: AppTheme.primaryColor.withValues(alpha: 0.5)),
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: AppTheme.primaryColor, width: 2),
@@ -393,6 +533,137 @@ class _ProfileScreenState extends State<ProfileScreen> {
             }
           : null,
       activeColor: AppTheme.primaryColor,
+    );
+  }
+
+  Widget buildSettingsTile(BuildContext context, String title, IconData icon, VoidCallback onPressed) {
+    return ListTile(
+      leading: Icon(icon, color: AppTheme.primaryColor),
+      title: Text(title),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: onPressed,
+    );
+  }
+
+  void _showDeveloperOptions(BuildContext context) {
+    bool useRealBackendValue = AppConstants.useRealBackend;
+    String backendUrl = AppConstants.baseUrl;
+    
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Developer Options'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Backend Configuration',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 8),
+                  SwitchListTile(
+                    title: const Text('Use Real Backend'),
+                    subtitle: Text(useRealBackendValue 
+                      ? 'Using real backend API'
+                      : 'Using mock data'),
+                    value: useRealBackendValue,
+                    onChanged: (value) {
+                      setState(() {
+                        useRealBackendValue = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  const Text('Current Backend URL:'),
+                  const SizedBox(height: 4),
+                  Text(
+                    backendUrl,
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontFamily: 'monospace',
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  FutureBuilder<bool>(
+                    future: ApiService().testConnection(),
+                    builder: (context, snapshot) {
+                      return Row(
+                        children: [
+                          Container(
+                            width: 12,
+                            height: 12,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: snapshot.data == true
+                                  ? Colors.green
+                                  : Colors.red,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            snapshot.data == true
+                                ? 'Backend Connected'
+                                : 'Backend Unreachable',
+                            style: TextStyle(
+                              color: snapshot.data == true
+                                  ? Colors.green
+                                  : Colors.red,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('CANCEL'),
+              ),
+              TextButton(
+                onPressed: () {
+                  // Update the app constants via static values
+                  AppConstants.useRealBackend = useRealBackendValue;
+                  
+                  // For demo purposes, just restart the app with an info message
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Backend settings updated to ${useRealBackendValue ? "use real backend" : "use mock data"}. '
+                        'Some screens may need to be reloaded.',
+                      ),
+                    ),
+                  );
+                  Navigator.of(context).pop();
+                  
+                  // Test connection after changing settings
+                  ApiService().testConnection().then((success) {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            success 
+                              ? 'Successfully connected to backend!'
+                              : 'Backend connection failed. Still using mock data.',
+                          ),
+                          backgroundColor: success ? Colors.green : Colors.red,
+                        ),
+                      );
+                    }
+                  });
+                },
+                child: const Text('APPLY'),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 } 

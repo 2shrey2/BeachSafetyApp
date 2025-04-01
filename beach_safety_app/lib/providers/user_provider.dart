@@ -2,19 +2,21 @@ import 'package:flutter/foundation.dart';
 import '../models/user_model.dart';
 import '../models/notification_model.dart';
 import '../services/user_service.dart';
+import '../services/auth_service.dart';
 import '../services/mock_data_service.dart';
+import '../constants/app_constants.dart';
+import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProvider with ChangeNotifier {
   final UserService _userService = UserService();
+  final AuthService _authService = AuthService();
   
   User? _user;
   List<UserNotification> _notifications = [];
   bool _isLoading = false;
   String? _error;
   
-  // For demo, set to true to use mock data
-  final bool _useMockData = true;
-
   User? get user => _user;
   List<UserNotification> get notifications => _notifications;
   bool get isLoading => _isLoading;
@@ -27,7 +29,7 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      if (_useMockData) {
+      if (!AppConstants.useRealBackend) {
         // Use mock data for development
         await Future.delayed(const Duration(seconds: 1)); // Simulate API delay
         _user = MockDataService.getMockUser();
@@ -36,10 +38,27 @@ class UserProvider with ChangeNotifier {
       }
     } catch (e) {
       _error = e.toString();
+      
+      // Try to get the user from the auth service if the profile API fails
+      try {
+        final isLoggedIn = await _authService.isLoggedIn();
+        if (isLoggedIn && _user == null) {
+          // If we're logged in but don't have user data, use mock data
+          _user = MockDataService.getMockUser();
+        }
+      } catch (authErr) {
+        print('Failed to get auth user: $authErr');
+      }
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+  }
+  
+  // Set user data from login/register
+  void setUser(User user) {
+    _user = user;
+    notifyListeners();
   }
   
   // Update user profile
@@ -49,45 +68,58 @@ class UserProvider with ChangeNotifier {
     String? location,
     Map<String, bool>? notificationPreferences,
   }) async {
+    if (_user == null) {
+      _error = 'No user data available';
+      return false;
+    }
+
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      if (_useMockData) {
+      if (!AppConstants.useRealBackend) {
         // Use mock data for development
         await Future.delayed(const Duration(seconds: 1)); // Simulate API delay
         
-        // Update local mock user
-        if (_user != null) {
-          _user = User(
-            id: _user!.id,
-            name: name ?? _user!.name,
-            email: email ?? _user!.email,
-            location: location ?? _user!.location,
-            profileImageUrl: _user!.profileImageUrl,
-            favoriteBeachIds: _user!.favoriteBeachIds,
-            notificationPreferences: notificationPreferences ?? _user!.notificationPreferences,
-          );
-        }
+        // Create updated user object
+        final updatedUser = User(
+          id: _user!.id,
+          name: name ?? _user!.name,
+          email: email ?? _user!.email,
+          location: location ?? _user!.location,
+          profileImageUrl: _user!.profileImageUrl,
+          favoriteBeachIds: _user!.favoriteBeachIds,
+          notificationPreferences: notificationPreferences ?? _user!.notificationPreferences,
+        );
         
-        _isLoading = false;
-        notifyListeners();
-        return true;
+        // Update the user
+        _user = updatedUser;
+        
+        // Cache the updated user data
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('user_profile', updatedUser.toJson().toString());
+        } catch (e) {
+          print('Failed to cache user data: $e');
+        }
       } else {
-        _user = await _userService.updateUserProfile(
+        // Use real backend
+        final updatedUser = await _userService.updateUserProfile(
           name: name,
           email: email,
           location: location,
           notificationPreferences: notificationPreferences,
         );
         
-        _isLoading = false;
-        notifyListeners();
-        return true;
+        _user = updatedUser;
       }
+      
+      _isLoading = false;
+      notifyListeners();
+      return true;
     } catch (e) {
-      _error = e.toString();
+      _error = e.toString().replaceAll('Exception: ', '');
       _isLoading = false;
       notifyListeners();
       return false;
@@ -101,9 +133,9 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      if (_useMockData) {
+      if (!AppConstants.useRealBackend) {
         // Use mock data for development
-        await Future.delayed(const Duration(seconds: 1)); // Simulate API delay
+        await Future.delayed(const Duration(seconds: 1));
         _notifications = MockDataService.getMockNotifications();
       } else {
         _notifications = await _userService.getUserNotifications();
@@ -125,7 +157,7 @@ class UserProvider with ChangeNotifier {
     _notifications[index] = _notifications[index].copyWith(isRead: true);
     notifyListeners();
     
-    if (_useMockData) {
+    if (!AppConstants.useRealBackend) {
       // Just simulate API call
       await Future.delayed(const Duration(milliseconds: 500));
       return;
@@ -144,7 +176,7 @@ class UserProvider with ChangeNotifier {
   // Update user location
   Future<void> updateUserLocation(double latitude, double longitude) async {
     try {
-      if (_useMockData) {
+      if (!AppConstants.useRealBackend) {
         // Just simulate API call
         await Future.delayed(const Duration(milliseconds: 500));
         return;
@@ -161,5 +193,39 @@ class UserProvider with ChangeNotifier {
   void clearError() {
     _error = null;
     notifyListeners();
+  }
+  
+  // Test API connection
+  Future<bool> testConnection() async {
+    try {
+      print('Testing API connection to: ${AppConstants.baseUrl}');
+      final dio = Dio(BaseOptions(
+        baseUrl: AppConstants.baseUrl,
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+      ));
+      
+      // Try to access the health endpoint
+      try {
+        final response = await dio.get('/health');
+        print('Health endpoint response: ${response.statusCode}');
+        return true;
+      } catch (healthError) {
+        print('Health endpoint error: $healthError');
+        
+        // Try the docs endpoint
+        try {
+          final response = await dio.get('/docs');
+          print('Docs endpoint response: ${response.statusCode}');
+          return true;
+        } catch (docsError) {
+          print('Docs endpoint error: $docsError');
+          return false;
+        }
+      }
+    } catch (e) {
+      print('API connection test failed: $e');
+      return false;
+    }
   }
 } 

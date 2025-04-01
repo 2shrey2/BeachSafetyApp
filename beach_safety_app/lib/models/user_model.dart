@@ -22,14 +22,17 @@ class User {
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
+    // Handle both API formats (with or without nested fields)
+    final Map<String, dynamic> userData = json;
+    
     return User(
-      id: json['id'],
-      email: json['email'],
-      name: json['name'],
-      profileImageUrl: json['profile_image_url'],
-      location: json['location'],
-      favoriteBeachIds: List<String>.from(json['favorite_beach_ids'] ?? []),
-      notificationPreferences: Map<String, bool>.from(json['notification_preferences'] ?? {
+      id: userData['id']?.toString() ?? '',
+      email: userData['email'] ?? '',
+      name: userData['full_name'] ?? userData['name'] ?? '',  // Try full_name first, then fallback to name
+      profileImageUrl: userData['profile_image_url'],
+      location: userData['location'],
+      favoriteBeachIds: List<String>.from(userData['favorite_beach_ids'] ?? []),
+      notificationPreferences: Map<String, bool>.from(userData['notification_preferences'] ?? {
         'beach_warnings': true,
         'weather_updates': true,
         'safety_alerts': true,
@@ -41,7 +44,7 @@ class User {
     return {
       'id': id,
       'email': email,
-      'name': name,
+      'full_name': name,  // Changed from 'name' to 'full_name' to match backend
       'profile_image_url': profileImageUrl,
       'location': location,
       'favorite_beach_ids': favoriteBeachIds,

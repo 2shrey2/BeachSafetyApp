@@ -90,7 +90,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           Icon(
             Icons.favorite_border,
             size: 80,
-            color: Colors.grey.withOpacity(0.7),
+            color: Colors.grey.withValues(alpha: 0.7),
           ),
           const SizedBox(height: 16),
           const Text(
@@ -208,7 +208,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -229,6 +229,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           child: CachedNetworkImage(
                             imageUrl: beach.imageUrl!,
                             fit: BoxFit.cover,
+                            httpHeaders: const {'Access-Control-Allow-Origin': '*'},
                             placeholder: (context, url) => Container(
                               color: Colors.grey[300],
                               child: const Center(
@@ -290,7 +291,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                                     horizontal: 8,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: safetyColor.withOpacity(0.2),
+                                    color: safetyColor.withValues(alpha: 0.2),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Row(

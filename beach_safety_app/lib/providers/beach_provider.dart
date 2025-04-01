@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import '../models/beach_model.dart';
 import '../services/beach_service.dart';
 import '../services/mock_data_service.dart';
@@ -59,6 +60,16 @@ class BeachProvider with ChangeNotifier {
             beach.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
             beach.location.toLowerCase().contains(searchQuery.toLowerCase())
           ).toList();
+        }
+        
+        // If we're running on web, replace remote image URLs with local assets
+        if (kIsWeb) {
+          mockBeaches = mockBeaches.map((beach) {
+            // Use local asset instead of remote URL to avoid CORS issues
+            return beach.copyWith(
+              imageUrl: 'assets/images/beach.jpeg',
+            );
+          }).toList();
         }
         
         if (sortBy != null) {

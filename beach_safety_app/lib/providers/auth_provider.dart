@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
+import 'user_provider.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
@@ -9,6 +12,13 @@ class AuthProvider with ChangeNotifier {
   bool _isLoading = false;
   String? _error;
   bool _isLoggedIn = false;
+  
+  // Context for updating UserProvider
+  late BuildContext? _context;
+  
+  void setContext(BuildContext context) {
+    _context = context;
+  }
 
   User? get user => _user;
   bool get isLoading => _isLoading;
@@ -36,6 +46,7 @@ class AuthProvider with ChangeNotifier {
     required String name,
     required String email,
     required String password,
+    BuildContext? context,
   }) async {
     _isLoading = true;
     _error = null;
@@ -48,9 +59,20 @@ class AuthProvider with ChangeNotifier {
         password: password,
       );
       _isLoggedIn = true;
+      
+      // Update user provider with new user data
+      final ctx = context ?? _context;
+      if (ctx != null && _user != null) {
+        try {
+          Provider.of<UserProvider>(ctx, listen: false).setUser(_user!);
+        } catch (e) {
+          print('Failed to update UserProvider: $e');
+        }
+      }
+      
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = e.toString().replaceAll('Exception: ', '');
       return false;
     } finally {
       _isLoading = false;
@@ -62,6 +84,7 @@ class AuthProvider with ChangeNotifier {
   Future<bool> login({
     required String email,
     required String password,
+    BuildContext? context,
   }) async {
     _isLoading = true;
     _error = null;
@@ -73,9 +96,20 @@ class AuthProvider with ChangeNotifier {
         password: password,
       );
       _isLoggedIn = true;
+      
+      // Update user provider with new user data
+      final ctx = context ?? _context;
+      if (ctx != null && _user != null) {
+        try {
+          Provider.of<UserProvider>(ctx, listen: false).setUser(_user!);
+        } catch (e) {
+          print('Failed to update UserProvider: $e');
+        }
+      }
+      
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = e.toString().replaceAll('Exception: ', '');
       return false;
     } finally {
       _isLoading = false;

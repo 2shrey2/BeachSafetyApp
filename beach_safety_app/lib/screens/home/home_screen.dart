@@ -7,6 +7,7 @@ import '../../routes/app_routes.dart';
 import '../../widgets/loading_indicator.dart';
 import '../../screens/beach/beach_details_screen.dart';
 import 'widgets/category_tab.dart';
+import '../../providers/user_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -23,10 +24,20 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Load beaches when the screen initializes
+    
+    // Load beaches
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<BeachProvider>(context, listen: false).getBeaches(refresh: true);
+      _loadData();
     });
+  }
+
+  void _loadData() async {
+    // Load user profile
+    Provider.of<UserProvider>(context, listen: false).getUserProfile();
+    
+    // Load beaches
+    final beachProvider = Provider.of<BeachProvider>(context, listen: false);
+    await beachProvider.getBeaches(refresh: true);
   }
 
   @override
@@ -81,9 +92,19 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Section
-            Padding(
-              padding: const EdgeInsets.all(16.0),
+            // Header
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -93,24 +114,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              Text(
-                                'Hi, David 👋',
+                          Consumer<UserProvider>(
+                            builder: (context, userProvider, child) {
+                              final userName = userProvider.user?.name ?? 'User';
+                              return Text(
+                                'Hi, ${userName.isNotEmpty ? userName.split(' ').first : 'USER'} 👋',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: AppTheme.textPrimaryColor,
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              CircleAvatar(
-                                radius: 16,
-                                backgroundImage: NetworkImage(
-                                  'https://ui-avatars.com/api/?name=David&background=random',
-                                ),
-                              ),
-                            ],
+                              );
+                            }
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -121,6 +136,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ],
+                      ),
+                      Consumer<UserProvider>(
+                        builder: (context, userProvider, child) {
+                          final user = userProvider.user;
+                          return CircleAvatar(
+                            radius: 20,
+                            backgroundImage: user?.profileImageUrl != null
+                              ? NetworkImage(user!.profileImageUrl!)
+                              : AssetImage('assets/images/avatar.jpeg') as ImageProvider,
+                          );
+                        }
                       ),
                     ],
                   ),

@@ -22,6 +22,7 @@ class BeachDetailsScreen extends StatefulWidget {
 class _BeachDetailsScreenState extends State<BeachDetailsScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool _isMapView = false;
+  DateTime? _lastBackPressTime;
 
   @override
   void initState() {
@@ -42,397 +43,422 @@ class _BeachDetailsScreenState extends State<BeachDetailsScreen> with SingleTick
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Consumer<BeachProvider>(
-        builder: (context, beachProvider, child) {
-          if (beachProvider.isLoading && beachProvider.selectedBeach == null) {
-            return Center(
-              child: LoadingIndicator(
-                message: 'Loading beach details...',
-              ),
-            );
-          }
+    return PopScope(
+      onPopInvoked: (didPop) {
+        // If we're not on the first tab, go to first tab instead of exiting
+        if (_tabController.index != 0) {
+          setState(() => _tabController.index = 0);
+          _tabController.animateTo(0);
+          return;
+        }
+        
+        // Double back to exit
+        final now = DateTime.now();
+        if (_lastBackPressTime == null || 
+            now.difference(_lastBackPressTime!) > const Duration(seconds: 2)) {
+          _lastBackPressTime = now;
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Press back again to exit'),
+              duration: Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      canPop: false,
+      child: Scaffold(
+        body: Consumer<BeachProvider>(
+          builder: (context, beachProvider, child) {
+            if (beachProvider.isLoading && beachProvider.selectedBeach == null) {
+              return Center(
+                child: LoadingIndicator(
+                  message: 'Loading beach details...',
+                ),
+              );
+            }
 
-          final beach = beachProvider.selectedBeach;
-          if (beach == null) {
-            return Scaffold(
-              appBar: AppBar(
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                title: const Text('Beach Details'),
-              ),
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 64,
-                      color: Colors.red.withOpacity(0.7),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Beach not found',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                      child: Text(
-                        beachProvider.error ?? 'Could not load beach details',
-                        style: TextStyle(
-                          color: AppTheme.textSecondaryColor,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primaryColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      ),
-                      child: const Text('Go Back'),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          return CustomScrollView(
-            slivers: [
-              // App Bar with Beach Image
-              SliverAppBar(
-                expandedHeight: 250,
-                pinned: true,
-                backgroundColor: AppTheme.primaryColor,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                actions: [
-                  IconButton(
-                    icon: Icon(
-                      beach.isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      Provider.of<BeachProvider>(context, listen: false)
-                          .toggleFavorite(beach.id);
-                    },
+            final beach = beachProvider.selectedBeach;
+            if (beach == null) {
+              return Scaffold(
+                appBar: AppBar(
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () => Navigator.of(context).pop(),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.share, color: Colors.white),
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Share feature coming soon!'),
-                          duration: Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                ],
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Stack(
-                    fit: StackFit.expand,
+                  title: const Text('Beach Details'),
+                ),
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Beach Image
-                      CachedNetworkImage(
-                        imageUrl: beach.imageUrl ?? 'https://via.placeholder.com/400x250?text=Beach',
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          color: Colors.grey[200],
-                          child: const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: Colors.grey[200],
-                          child: const Icon(Icons.beach_access, size: 64),
+                      Icon(
+                        Icons.error_outline,
+                        size: 64,
+                        color: Colors.red.withValues(alpha: 0.7),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Beach not found',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      
-                      // Gradient overlay for better text visibility
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Colors.black.withOpacity(0.7),
-                            ],
-                            stops: const [0.6, 1.0],
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                        child: Text(
+                          beachProvider.error ?? 'Could not load beach details',
+                          style: TextStyle(
+                            color: AppTheme.textSecondaryColor,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      
-                      // Beach name and location at bottom
-                      Positioned(
-                        bottom: 16,
-                        left: 16,
-                        right: 16,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              beach.name,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.location_on,
-                                  color: Colors.white,
-                                  size: 16,
-                                ),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: Text(
-                                    beach.location,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 14,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.primaryColor,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         ),
+                        child: const Text('Go Back'),
                       ),
                     ],
                   ),
                 ),
-              ),
-              
-              // Beach Information
-              SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Quick Info Cards
-                    if (beach.currentConditions != null)
+              );
+            }
+
+            return CustomScrollView(
+              slivers: [
+                // App Bar with Beach Image
+                SliverAppBar(
+                  expandedHeight: 250,
+                  pinned: true,
+                  backgroundColor: AppTheme.primaryColor,
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: Icon(
+                        beach.isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        Provider.of<BeachProvider>(context, listen: false)
+                            .toggleFavorite(beach.id);
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.share, color: Colors.white),
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Share feature coming soon!'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // Beach Image
+                        CachedNetworkImage(
+                          imageUrl: beach.imageUrl ?? 'https://picsum.photos/400/250?blur=2',
+                          fit: BoxFit.cover,
+                          httpHeaders: const {'Access-Control-Allow-Origin': '*'},
+                          placeholder: (context, url) => Container(
+                            color: Colors.grey[200],
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            color: Colors.grey[200],
+                            child: const Icon(Icons.beach_access, size: 64),
+                          ),
+                        ),
+                        
+                        // Gradient overlay for better text visibility
+                        Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Colors.black.withValues(alpha: 0.7),
+                              ],
+                              stops: const [0.6, 1.0],
+                            ),
+                          ),
+                        ),
+                        
+                        // Beach name and location at bottom
+                        Positioned(
+                          bottom: 16,
+                          left: 16,
+                          right: 16,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                beach.name,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.location_on,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      beach.location,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                // Beach Information
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Quick Info Cards
+                      if (beach.currentConditions != null)
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Row(
+                            children: [
+                              _buildInfoCard(
+                                icon: Icons.waves,
+                                value: '${beach.currentConditions!.waveHeight} m',
+                                label: 'Waves',
+                              ),
+                              _buildInfoCard(
+                                icon: Icons.thermostat,
+                                value: '${beach.currentConditions!.temperature}˚ C',
+                                label: 'Temp',
+                              ),
+                              _buildInfoCard(
+                                icon: Icons.air,
+                                value: '${beach.currentConditions!.windSpeed} km/h',
+                                label: 'Wind',
+                              ),
+                              if (beach.rating != null)
+                                _buildInfoCard(
+                                  icon: Icons.star,
+                                  value: beach.rating!.toStringAsFixed(1),
+                                  label: 'Rating',
+                                  valueColor: AppTheme.accentColor,
+                                ),
+                            ],
+                          ),
+                        ),
+                      
+                      // Safety Status
+                      if (beach.currentConditions != null)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: _getSafetyColor(beach.currentConditions!.safetyStatus).withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: _getSafetyColor(beach.currentConditions!.safetyStatus),
+                                width: 1,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: _getSafetyColor(beach.currentConditions!.safetyStatus),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    _getSafetyIcon(beach.currentConditions!.safetyStatus),
+                                    color: Colors.white,
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Current Status: ${_formatSafetyStatus(beach.currentConditions!.safetyStatus)}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: _getSafetyColor(beach.currentConditions!.safetyStatus),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        _getSafetyMessage(beach.currentConditions!.safetyStatus),
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: AppTheme.textSecondaryColor,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Last Updated: ${DateFormat('MMM dd, yyyy • HH:mm').format(beach.currentConditions!.timestamp)}',
+                                        style: const TextStyle(
+                                          fontSize: 10,
+                                          color: AppTheme.textLightColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        
+                      // View Selector
                       Padding(
                         padding: const EdgeInsets.all(16),
                         child: Row(
                           children: [
-                            _buildInfoCard(
-                              icon: Icons.waves,
-                              value: '${beach.currentConditions!.waveHeight} m',
-                              label: 'Waves',
-                            ),
-                            _buildInfoCard(
-                              icon: Icons.thermostat,
-                              value: '${beach.currentConditions!.temperature}˚ C',
-                              label: 'Temp',
-                            ),
-                            _buildInfoCard(
-                              icon: Icons.air,
-                              value: '${beach.currentConditions!.windSpeed} km/h',
-                              label: 'Wind',
-                            ),
-                            if (beach.rating != null)
-                              _buildInfoCard(
-                                icon: Icons.star,
-                                value: beach.rating!.toStringAsFixed(1),
-                                label: 'Rating',
-                                valueColor: AppTheme.accentColor,
-                              ),
-                          ],
-                        ),
-                      ),
-                    
-                    // Safety Status
-                    if (beach.currentConditions != null)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: _getSafetyColor(beach.currentConditions!.safetyStatus).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                              color: _getSafetyColor(beach.currentConditions!.safetyStatus),
-                              width: 1,
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
+                            Expanded(
+                              child: Container(
+                                height: 40,
                                 decoration: BoxDecoration(
-                                  color: _getSafetyColor(beach.currentConditions!.safetyStatus),
-                                  shape: BoxShape.circle,
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: Icon(
-                                  _getSafetyIcon(beach.currentConditions!.safetyStatus),
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                child: Row(
                                   children: [
-                                    Text(
-                                      'Current Status: ${_formatSafetyStatus(beach.currentConditions!.safetyStatus)}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: _getSafetyColor(beach.currentConditions!.safetyStatus),
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _isMapView = false;
+                                          });
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: !_isMapView ? AppTheme.primaryColor : Colors.transparent,
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Overview',
+                                            style: TextStyle(
+                                              color: !_isMapView ? Colors.white : AppTheme.textSecondaryColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      _getSafetyMessage(beach.currentConditions!.safetyStatus),
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: AppTheme.textSecondaryColor,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'Last Updated: ${DateFormat('MMM dd, yyyy • HH:mm').format(beach.currentConditions!.timestamp)}',
-                                      style: const TextStyle(
-                                        fontSize: 10,
-                                        color: AppTheme.textLightColor,
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _isMapView = true;
+                                          });
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: _isMapView ? AppTheme.primaryColor : Colors.transparent,
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            'Details',
+                                            style: TextStyle(
+                                              color: _isMapView ? Colors.white : AppTheme.textSecondaryColor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      // Tab Content
+                      !_isMapView
+                          ? _buildOverviewSection(beach)
+                          : _buildDetailsSection(beach),
+                          
+                      // Book Now Button
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            // Implement booking functionality
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryColor,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Text(
+                                'Book Now',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              Icon(Icons.arrow_forward),
                             ],
                           ),
                         ),
                       ),
-                      
-                    // View Selector
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          _isMapView = false;
-                                        });
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: !_isMapView ? AppTheme.primaryColor : Colors.transparent,
-                                          borderRadius: BorderRadius.circular(20),
-                                        ),
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'Overview',
-                                          style: TextStyle(
-                                            color: !_isMapView ? Colors.white : AppTheme.textSecondaryColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          _isMapView = true;
-                                        });
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: _isMapView ? AppTheme.primaryColor : Colors.transparent,
-                                          borderRadius: BorderRadius.circular(20),
-                                        ),
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          'Details',
-                                          style: TextStyle(
-                                            color: _isMapView ? Colors.white : AppTheme.textSecondaryColor,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    
-                    // Tab Content
-                    !_isMapView
-                        ? _buildOverviewSection(beach)
-                        : _buildDetailsSection(beach),
-                        
-                    // Book Now Button
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // Implement booking functionality
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryColor,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Text(
-                              'Book Now',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            Icon(Icons.arrow_forward),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          );
-        },
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -612,7 +638,7 @@ class _BeachDetailsScreenState extends State<BeachDetailsScreen> with SingleTick
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppTheme.primaryColor.withOpacity(0.1),
+              color: AppTheme.primaryColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(

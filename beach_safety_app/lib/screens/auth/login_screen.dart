@@ -5,6 +5,7 @@ import '../../providers/auth_provider.dart';
 import '../../routes/app_routes.dart';
 import 'register_screen.dart';
 import '../main_screen.dart';
+import '../../services/api_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -32,13 +33,18 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState?.validate() ?? false) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       
-      final success = await authProvider.login(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
-      
-      if (success && mounted) {
-        Navigator.of(context).pushReplacementNamed(AppRoutes.main);
+      try {
+        final success = await authProvider.login(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          context: context,
+        );
+        
+        if (success && mounted) {
+          Navigator.of(context).pushReplacementNamed(AppRoutes.main);
+        }
+      } catch (e) {
+        // Error is already handled by the provider
       }
     }
   }
@@ -164,6 +170,54 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: const Text('Forgot Password?'),
                           ),
                         ],
+                      ),
+                      
+                      // Test credentials hint
+                      const Padding(
+                        padding: EdgeInsets.only(bottom: 16),
+                        child: Text(
+                          'Use test@example.com / password for testing',
+                          style: TextStyle(
+                            color: AppTheme.textSecondaryColor,
+                            fontSize: 12,
+                            fontStyle: FontStyle.italic,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      
+                      // Backend connection status
+                      FutureBuilder<bool>(
+                        future: ApiService().testConnection(),
+                        builder: (context, snapshot) {
+                          final isConnected = snapshot.hasData && snapshot.data == true;
+                          return Padding(
+                            padding: EdgeInsets.only(bottom: 16),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: isConnected ? Colors.green : Colors.red,
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  isConnected
+                                      ? 'Backend connected'
+                                      : 'Backend unavailable - using mock data',
+                                  style: TextStyle(
+                                    color: AppTheme.textSecondaryColor,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
                       
                       // Error Message

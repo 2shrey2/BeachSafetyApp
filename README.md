@@ -1,180 +1,127 @@
-# Beach Safety App Backend
+# Beach Safety App
 
-This is the backend API for the Beach Safety App, built with FastAPI, PostgreSQL, and Redis.
-
-## Features
-
-- **StormGlass API Integration**: Fetches and processes marine weather data
-- **Beach Safety Algorithm**: Analyzes weather conditions to determine safety levels
-- **User Authentication**: Secure JWT-based authentication
-- **Real-time Notifications**: Alerts users about dangerous conditions
-- **Geospatial Queries**: Find beaches near user's location
-
-## Tech Stack
-
-- **FastAPI**: Modern, fast web framework for building APIs
-- **PostgreSQL**: Relational database for storing app data
-- **SQLAlchemy**: ORM for database interaction
-- **Redis**: Caching for StormGlass API responses
-- **APScheduler**: Background task scheduling
-- **Pydantic**: Data validation and settings management
-- **JWT Authentication**: Secure user authentication
+A Flutter and FastAPI application for monitoring beach conditions and safety.
 
 ## Project Structure
 
+- `app/` - FastAPI backend
+- `beach_safety_app/` - Flutter frontend
+
+## Quick Start Guide
+
+For Windows users, simply run the provided batch script to start both backend and frontend:
+
 ```
-app/
-├── api/                # API endpoints
-│   ├── deps.py         # API dependencies
-│   └── routes/         # API route handlers
-├── core/               # Core application code
-│   ├── auth.py         # Authentication utilities
-│   └── config.py       # Application configuration
-├── crud/               # Database CRUD operations
-├── db/                 # Database configuration
-│   ├── redis.py        # Redis client setup
-│   └── session.py      # SQLAlchemy session setup
-├── models/             # SQLAlchemy models
-├── schemas/            # Pydantic schemas
-├── services/           # Business logic services
-│   ├── stormglass.py   # StormGlass API service
-│   ├── suitability.py  # Beach suitability algorithm
-│   └── notification.py # User notification service
-├── tasks/              # Background tasks
-│   ├── scheduler.py    # Task scheduler
-│   └── weather.py      # Weather data fetch tasks
-├── utils/              # Utility functions
-└── main.py             # Application entry point
+start_app.bat
 ```
 
-## Setup and Installation
+This will start:
+- FastAPI backend at http://127.0.0.1:8000/api/v1
+- Flutter web frontend at http://127.0.0.1:57681
+
+## Setup Instructions (Manual)
 
 ### Prerequisites
 
-- Python 3.8+
-- PostgreSQL (optional, will use SQLite as fallback)
-- Redis (optional, will use in-memory cache as fallback)
+- Python 3.8+ with pip
+- Flutter SDK installed
+- Chrome browser (for Flutter web)
 
-### Environment Setup
+### Backend Setup
 
-1. Clone the repository
-```bash
-git clone https://github.com/yourusername/beach-safety-app.git
-cd beach-safety-app
-```
-
-2. Create and activate a virtual environment
-```bash
-python -m venv venv
-# On Windows
-venv\Scripts\activate
-# On MacOS/Linux
-source venv/bin/activate
-```
-
-3. Install dependencies
-```bash
-pip install -r requirements.txt
-```
-
-4. Create a `.env` file (copy from `.env.example` and update with your values)
-```bash
-cp .env.example .env
-```
-
-5. Set up PostgreSQL (recommended but optional)
-   - Create a database for the application:
-   ```sql
-   CREATE DATABASE beach_safety_db;
+1. Navigate to the backend directory:
    ```
-   - Create a user and grant privileges:
-   ```sql
-   CREATE USER beachapp WITH PASSWORD 'your_password';
-   GRANT ALL PRIVILEGES ON DATABASE beach_safety_db TO beachapp;
-   ```
-   - Update the connection details in the `.env` file:
-   ```
-   POSTGRES_SERVER=localhost
-   POSTGRES_USER=beachapp
-   POSTGRES_PASSWORD=your_password
-   POSTGRES_DB=beach_safety_db
-   POSTGRES_PORT=5432
+   cd app
    ```
 
-   If PostgreSQL is not available, the application will automatically fall back to using SQLite.
-
-6. Set up Redis (recommended but optional)
-   - Make sure Redis is running (default: localhost:6379)
-   - Update Redis settings in the `.env` file if needed
-   
-   If Redis is not available, the application will automatically use an in-memory cache.
-
-7. Set up StormGlass API key (optional)
-   - Sign up for an API key at https://stormglass.io/
-   - Add the key to your `.env` file:
+2. Create a virtual environment:
    ```
-   STORMGLASS_API_KEY=your_key_here
+   python -m venv venv
+   ```
+
+3. Activate the virtual environment:
+   - On Windows:
+     ```
+     venv\Scripts\activate
+     ```
+   - On macOS/Linux:
+     ```
+     source venv/bin/activate
+     ```
+
+4. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+
+5. Run the backend:
+   ```
+   uvicorn main:app --host 127.0.0.1 --port 8000 --reload
    ```
    
-   If no API key is provided, the application will use mock data.
+   The API will be available at: `http://127.0.0.1:8000/api/v1/`
+   API documentation: `http://127.0.0.1:8000/docs`
 
-### Running the Application
+### Frontend Setup
 
-```bash
-python run.py
-```
+1. Navigate to the frontend directory:
+   ```
+   cd beach_safety_app
+   ```
 
-The API will be available at http://localhost:8000
+2. Get Flutter dependencies:
+   ```
+   flutter pub get
+   ```
 
-API documentation will be available at:
-- http://localhost:8000/docs (Swagger UI)
-- http://localhost:8000/redoc (ReDoc)
+3. Run the Flutter app on Web:
+   ```
+   flutter run -d web-server --web-port 57681
+   ```
+   
+   The web app will be available at: `http://127.0.0.1:57681`
 
-## API Endpoints
+## URL Configuration
 
-### Authentication
-- `POST /api/v1/auth/register`: Register a new user
-- `POST /api/v1/auth/login`: Login and get access token
+This application is configured to work with the following URLs:
 
-### Beaches
-- `GET /api/v1/beaches`: List beaches
-- `GET /api/v1/beaches/{beach_id}`: Get beach details
-- `GET /api/v1/beaches/{beach_id}/conditions`: Get current beach conditions
-- `POST /api/v1/beaches/{beach_id}/favorite`: Add beach to favorites
-- `DELETE /api/v1/beaches/{beach_id}/favorite`: Remove beach from favorites
-
-### Weather
-- `GET /api/v1/weather/beaches/{beach_id}`: Get weather data for a beach
-- `GET /api/v1/weather/nearby`: Get conditions for nearby beaches
-
-### User
-- `GET /api/v1/users/me`: Get current user info
-- `PUT /api/v1/users/me`: Update user info
-- `PUT /api/v1/users/me/location`: Update user location
-- `GET /api/v1/users/me/notifications`: Get user notifications
+- Backend API: `http://127.0.0.1:8000/api/v1`
+- API Documentation: `http://127.0.0.1:8000/docs`
+- Frontend: `http://127.0.0.1:57681`
 
 ## Troubleshooting
 
-### Database Connection Issues
+### CORS Issues
 
-1. **PostgreSQL Authentication Failed**
-   - Check that PostgreSQL is running
-   - Verify the username and password in the `.env` file
-   - Make sure the specified database exists
-   - The application will fall back to SQLite if PostgreSQL is unavailable
+If you encounter CORS issues:
 
-2. **Redis Connection Issues**
-   - Check that Redis is running
-   - Verify the Redis connection details in the `.env` file
-   - The application will use an in-memory cache if Redis is unavailable
+1. Ensure the backend is running at `http://127.0.0.1:8000`
+2. Verify that the CORS middleware in `app/main.py` includes your frontend URL
+3. Check that the frontend URL in `beach_safety_app/lib/utils/cors_proxy.dart` matches your actual frontend URL
 
-3. **Missing API Keys**
-   - If the StormGlass API key is missing, the application will generate mock data
+### Connection Issues
 
-### First-time Setup
+Use the built-in diagnostic tools:
 
-If you're starting with an empty database, you'll need to:
+1. Check the console logs when starting the app for connection status
+2. Look for any errors related to backend connectivity
 
-1. Create a first admin user through the registration endpoint
-2. Add some initial beach data using the beaches API
-3. Wait for the scheduled task to fetch weather data, or trigger it manually
+### Browser Console Errors
+
+For CORS or API connection issues in the web frontend:
+1. Open Chrome DevTools (F12)
+2. Check the Console and Network tabs for error details
+
+### Common Errors
+
+1. **"Address already in use" error**
+   - Another process might be using port 8000 or 57681
+   - Find and stop the process, or use different ports
+
+2. **"Cannot connect to backend" error**
+   - Make sure the FastAPI backend is running
+   - Check that the API URL in `app_constants.dart` is correct
+
+3. **API not accessible at `/api/v1` path**
+   - Verify settings.API_V1_STR in `app/core/config.py` is set to `/api/v1`
+   - Check that the API router is correctly mounted in `app/main.py`

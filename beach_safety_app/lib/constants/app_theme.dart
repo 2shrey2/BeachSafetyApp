@@ -50,7 +50,7 @@ class AppTheme {
       colorScheme: ColorScheme.light(
         primary: primaryColor,
         secondary: accentColor,
-        background: scaffoldBackgroundColor,
+        surface: scaffoldBackgroundColor,
         error: dangerColor,
       ),
       scaffoldBackgroundColor: scaffoldBackgroundColor,

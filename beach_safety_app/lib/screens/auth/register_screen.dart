@@ -45,14 +45,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       
-      final success = await authProvider.register(
-        name: _nameController.text.trim(),
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
-      
-      if (success && mounted) {
-        Navigator.of(context).pushReplacementNamed(AppRoutes.main);
+      try {
+        final success = await authProvider.register(
+          name: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          context: context,
+        );
+        
+        if (success && mounted) {
+          Navigator.of(context).pushReplacementNamed(AppRoutes.main);
+        }
+      } catch (e) {
+        // Error is already handled by the provider
       }
     }
   }

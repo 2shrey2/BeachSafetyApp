@@ -42,7 +42,7 @@ class BeachCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -71,6 +71,10 @@ class BeachCard extends StatelessWidget {
                             height: 160,
                             width: double.infinity,
                             fit: BoxFit.cover,
+                            httpHeaders: const {'Access-Control-Allow-Origin': '*'},
+                            useOldImageOnUrlChange: true,
+                            fadeInDuration: Duration.zero,
+                            memCacheWidth: 320,
                             placeholder: (context, url) => Container(
                               height: 160,
                               color: Colors.grey[200],
@@ -78,11 +82,20 @@ class BeachCard extends StatelessWidget {
                                 child: CircularProgressIndicator(),
                               ),
                             ),
-                            errorWidget: (context, url, error) => Container(
-                              height: 160,
-                              color: Colors.grey[200],
-                              child: const Icon(Icons.error),
-                            ),
+                            errorWidget: (context, url, error) {
+                              print('Error loading image: $error for URL: $url');
+                              return Container(
+                                height: 160,
+                                color: Colors.grey[200],
+                                child: Image.asset(
+                                  'assets/images/beach.jpeg',
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(Icons.beach_access, size: 64);
+                                  },
+                                ),
+                              );
+                            },
                           )
                         : Container(
                             height: 160,
@@ -97,7 +110,7 @@ class BeachCard extends StatelessWidget {
                     right: 8,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
@@ -124,7 +137,7 @@ class BeachCard extends StatelessWidget {
                       right: 0,
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 4),
-                        color: safetyColor.withOpacity(0.8),
+                        color: safetyColor.withValues(alpha: 0.8),
                         child: Text(
                           beach.currentConditions!.safetyStatus.toUpperCase(),
                           textAlign: TextAlign.center,
