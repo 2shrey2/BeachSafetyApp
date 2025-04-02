@@ -161,22 +161,33 @@ class ApiService {
   // Generic GET request
   Future<dynamic> get(String path, {Map<String, dynamic>? queryParameters}) async {
     try {
+      if (AppConstants.logApiCalls) {
+        print('Sending GET request to $path with query params: $queryParameters');
+      }
       final response = await _dio.get(path, queryParameters: queryParameters);
+      if (AppConstants.logApiCalls) {
+        print('Received GET response: ${response.statusCode}');
+      }
       return response.data;
     } catch (e) {
-      _handleError(e);
+      print('GET request failed for $path: $e');
+      rethrow; // Let the caller handle the error
     }
   }
 
   // Generic POST request
   Future<dynamic> post(String path, {Object? data}) async {
     try {
-      print("Sending POST request to $path with data: $data");
+      if (AppConstants.logApiCalls) {
+        print('Sending POST request to $path with data: $data');
+      }
       final response = await _dio.post(path, data: data);
-      print("Received response: ${response.data}");
+      if (AppConstants.logApiCalls) {
+        print('Received POST response: ${response.statusCode}');
+      }
       return response.data;
     } catch (e) {
-      print("POST request failed: $e");
+      print('POST request failed for $path: $e');
       rethrow; // Let the caller handle the error
     }
   }
@@ -184,20 +195,34 @@ class ApiService {
   // Generic PUT request
   Future<dynamic> put(String path, {Object? data}) async {
     try {
+      if (AppConstants.logApiCalls) {
+        print('Sending PUT request to $path with data: $data');
+      }
       final response = await _dio.put(path, data: data);
+      if (AppConstants.logApiCalls) {
+        print('Received PUT response: ${response.statusCode}');
+      }
       return response.data;
     } catch (e) {
-      _handleError(e);
+      print('PUT request failed for $path: $e');
+      rethrow; // Let the caller handle the error
     }
   }
 
   // Generic DELETE request
   Future<dynamic> delete(String path) async {
     try {
+      if (AppConstants.logApiCalls) {
+        print('Sending DELETE request to $path');
+      }
       final response = await _dio.delete(path);
+      if (AppConstants.logApiCalls) {
+        print('Received DELETE response: ${response.statusCode}');
+      }
       return response.data;
     } catch (e) {
-      _handleError(e);
+      print('DELETE request failed for $path: $e');
+      rethrow; // Let the caller handle the error
     }
   }
 

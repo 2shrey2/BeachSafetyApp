@@ -10,7 +10,11 @@ from app.schemas.weather_data import BeachConditions
 
 def get_beach(db: Session, id: int) -> Optional[Beach]:
     """Get beach by ID"""
-    return db.query(Beach).filter(Beach.id == id).first()
+    beach = db.query(Beach).filter(Beach.id == id).first()
+    if beach and not beach.location:
+        # Generate location if it doesn't exist
+        beach.location = f"{beach.city}, {beach.state}"
+    return beach
 
 
 def get_beaches(
@@ -30,11 +34,23 @@ def get_beaches(
     if name:
         query = query.filter(Beach.name.ilike(f"%{name}%"))
     
-    return query.offset(skip).limit(limit).all()
+    beaches = query.offset(skip).limit(limit).all()
+    
+    # Generate location field if missing
+    for beach in beaches:
+        if not beach.location:
+            beach.location = f"{beach.city}, {beach.state}"
+    
+    return beaches
 
 
 def create_beach(db: Session, obj_in: BeachCreate) -> Beach:
     """Create a new beach"""
+    # Generate location if not provided
+    location = obj_in.location
+    if not location and obj_in.city and obj_in.state:
+        location = f"{obj_in.city}, {obj_in.state}"
+    
     beach = Beach(
         name=obj_in.name,
         description=obj_in.description,
@@ -43,7 +59,11 @@ def create_beach(db: Session, obj_in: BeachCreate) -> Beach:
         state=obj_in.state,
         city=obj_in.city,
         is_active=obj_in.is_active,
-        image_url=obj_in.image_url
+        image_url=obj_in.image_url,
+        is_favorite=obj_in.is_favorite,
+        rating=obj_in.rating,
+        view_count=obj_in.view_count or 0,
+        location=location
     )
     db.add(beach)
     db.commit()
@@ -70,11 +90,34 @@ def update_beach(db: Session, db_obj: Beach, obj_in: BeachUpdate) -> Beach:
         db_obj.is_active = obj_in.is_active
     if obj_in.image_url is not None:
         db_obj.image_url = obj_in.image_url
+    if obj_in.is_favorite is not None:
+        db_obj.is_favorite = obj_in.is_favorite
+    if obj_in.rating is not None:
+        db_obj.rating = obj_in.rating
+    if obj_in.view_count is not None:
+        db_obj.view_count = obj_in.view_count
+    
+    # Generate location field if city or state was updated
+    if obj_in.location is not None:
+        db_obj.location = obj_in.location
+    elif (obj_in.city is not None or obj_in.state is not None) and db_obj.city and db_obj.state:
+        db_obj.location = f"{db_obj.city}, {db_obj.state}"
         
     db.add(db_obj)
     db.commit()
     db.refresh(db_obj)
     return db_obj
+
+
+def increment_view_count(db: Session, beach_id: int) -> Beach:
+    """Increment the view count for a beach"""
+    beach = get_beach(db, id=beach_id)
+    if beach:
+        beach.view_count = (beach.view_count or 0) + 1
+        db.add(beach)
+        db.commit()
+        db.refresh(beach)
+    return beach
 
 
 def delete_beach(db: Session, id: int) -> None:
@@ -114,6 +157,9 @@ def get_nearby_beaches(
         if distance <= radius_km:
             # Add distance attribute to beach
             beach.distance = distance
+            # Generate location if missing
+            if not beach.location:
+                beach.location = f"{beach.city}, {beach.state}"
             nearby_beaches.append(beach)
     
     # Sort by distance and limit results
@@ -157,5 +203,6 @@ beach = {
     "update": update_beach,
     "delete": delete_beach,
     "get_nearby": get_nearby_beaches,
-    "get_nearby_with_conditions": get_nearby_beaches_with_conditions
+    "get_nearby_with_conditions": get_nearby_beaches_with_conditions,
+    "increment_view_count": increment_view_count
 } 

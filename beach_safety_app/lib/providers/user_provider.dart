@@ -1,15 +1,14 @@
 import 'package:flutter/foundation.dart';
 import '../models/user_model.dart';
 import '../models/notification_model.dart';
-import '../services/user_service.dart';
+import '../services/data_service.dart';
 import '../services/auth_service.dart';
-import '../services/mock_data_service.dart';
 import '../constants/app_constants.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProvider with ChangeNotifier {
-  final UserService _userService = UserService();
+  final DataService _dataService = DataService();
   final AuthService _authService = AuthService();
   
   User? _user;
@@ -29,13 +28,7 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      if (!AppConstants.useRealBackend) {
-        // Use mock data for development
-        await Future.delayed(const Duration(seconds: 1)); // Simulate API delay
-        _user = MockDataService.getMockUser();
-      } else {
-        _user = await _userService.getUserProfile();
-      }
+      _user = await _dataService.getUserProfile();
     } catch (e) {
       _error = e.toString();
       
@@ -43,8 +36,17 @@ class UserProvider with ChangeNotifier {
       try {
         final isLoggedIn = await _authService.isLoggedIn();
         if (isLoggedIn && _user == null) {
-          // If we're logged in but don't have user data, use mock data
-          _user = MockDataService.getMockUser();
+          // If we're logged in but don't have user data, create a minimal user
+          print('Creating default user after auth check');
+          final userId = await _authService.getUserId();
+          if (userId != null) {
+            _user = User(
+              id: userId,
+              name: 'User',
+              email: 'user@example.com',
+              profileImageUrl: 'assets/images/avatar.jpeg',
+            );
+          }
         }
       } catch (authErr) {
         print('Failed to get auth user: $authErr');
@@ -78,48 +80,31 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      if (!AppConstants.useRealBackend) {
-        // Use mock data for development
-        await Future.delayed(const Duration(seconds: 1)); // Simulate API delay
-        
-        // Create updated user object
-        final updatedUser = User(
-          id: _user!.id,
-          name: name ?? _user!.name,
-          email: email ?? _user!.email,
-          location: location ?? _user!.location,
-          profileImageUrl: _user!.profileImageUrl,
-          favoriteBeachIds: _user!.favoriteBeachIds,
-          notificationPreferences: notificationPreferences ?? _user!.notificationPreferences,
-        );
-        
-        // Update the user
+      // Create updated user object
+      final updatedUser = User(
+        id: _user!.id,
+        name: name ?? _user!.name,
+        email: email ?? _user!.email,
+        location: location ?? _user!.location,
+        profileImageUrl: _user!.profileImageUrl,
+        favoriteBeachIds: _user!.favoriteBeachIds,
+        notificationPreferences: notificationPreferences ?? _user!.notificationPreferences,
+      );
+      
+      // Update via DataService
+      final success = await _dataService.updateUserProfile(updatedUser);
+      
+      if (success) {
         _user = updatedUser;
-        
-        // Cache the updated user data
-        try {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.setString('user_profile', updatedUser.toJson().toString());
-        } catch (e) {
-          print('Failed to cache user data: $e');
-        }
       } else {
-        // Use real backend
-        final updatedUser = await _userService.updateUserProfile(
-          name: name,
-          email: email,
-          location: location,
-          notificationPreferences: notificationPreferences,
-        );
-        
-        _user = updatedUser;
+        _error = 'Failed to update profile';
       }
       
       _isLoading = false;
       notifyListeners();
-      return true;
+      return success;
     } catch (e) {
-      _error = e.toString().replaceAll('Exception: ', '');
+      _error = e.toString();
       _isLoading = false;
       notifyListeners();
       return false;
@@ -133,13 +118,7 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
 
     try {
-      if (!AppConstants.useRealBackend) {
-        // Use mock data for development
-        await Future.delayed(const Duration(seconds: 1));
-        _notifications = MockDataService.getMockNotifications();
-      } else {
-        _notifications = await _userService.getUserNotifications();
-      }
+      _notifications = await _dataService.getUserNotifications();
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -157,14 +136,14 @@ class UserProvider with ChangeNotifier {
     _notifications[index] = _notifications[index].copyWith(isRead: true);
     notifyListeners();
     
-    if (!AppConstants.useRealBackend) {
-      // Just simulate API call
-      await Future.delayed(const Duration(milliseconds: 500));
-      return;
-    }
-    
     try {
-      await _userService.markNotificationAsRead(notificationId);
+      final success = await _dataService.markNotificationAsRead(notificationId);
+      if (!success) {
+        // If not successful, revert
+        _notifications[index] = _notifications[index].copyWith(isRead: false);
+        _error = 'Failed to mark notification as read';
+        notifyListeners();
+      }
     } catch (e) {
       // If error, revert
       _notifications[index] = _notifications[index].copyWith(isRead: false);
@@ -176,13 +155,10 @@ class UserProvider with ChangeNotifier {
   // Update user location
   Future<void> updateUserLocation(double latitude, double longitude) async {
     try {
-      if (!AppConstants.useRealBackend) {
-        // Just simulate API call
-        await Future.delayed(const Duration(milliseconds: 500));
-        return;
-      }
-      
-      await _userService.updateUserLocation(latitude, longitude);
+      await _dataService.updateUserLocation(
+        latitude: latitude,
+        longitude: longitude,
+      );
     } catch (e) {
       _error = e.toString();
       notifyListeners();

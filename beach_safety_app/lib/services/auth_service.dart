@@ -271,4 +271,14 @@ class AuthService {
     await _secureStorage.delete(key: StorageKeys.userId);
     await _secureStorage.delete(key: StorageKeys.userProfile);
   }
+
+  // Get user ID from secure storage
+  Future<String?> getUserId() async {
+    try {
+      return await _secureStorage.read(key: StorageKeys.userId);
+    } catch (e) {
+      print('Error getting user ID: $e');
+      return null;
+    }
+  }
 } 

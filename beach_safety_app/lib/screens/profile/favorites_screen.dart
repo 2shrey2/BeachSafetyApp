@@ -33,9 +33,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       await beachProvider.getFavoriteBeaches();
       
       setState(() {
-        _favoriteBeaches = beachProvider.beaches.where((beach) => beach.isFavorite).toList();
+        _favoriteBeaches = beachProvider.favoriteBeaches;
         _isLoading = false;
       });
+      
+      print('Loaded ${_favoriteBeaches.length} favorite beaches');
+      for (final beach in _favoriteBeaches) {
+        print('Favorite beach: ${beach.name}, image: ${beach.imageUrl}');
+      }
     } catch (e) {
       setState(() {
         _isLoading = false;
@@ -200,149 +205,195 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           ),
         ),
         direction: DismissDirection.endToStart,
-        onDismissed: (direction) => _removeFromFavorites(beach),
-        child: GestureDetector(
+        confirmDismiss: (direction) async {
+          return await showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Remove from Favorites?'),
+                content: Text('Are you sure you want to remove ${beach.name} from favorites?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text('CANCEL'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    child: const Text('REMOVE'),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+        onDismissed: (direction) {
+          _removeFromFavorites(beach);
+        },
+        child: InkWell(
           onTap: () => _navigateToBeachDetails(beach),
+          borderRadius: BorderRadius.circular(12),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.1),
-                  blurRadius: 8,
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
               ],
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Container(
-                color: Colors.white,
-                child: Row(
-                  children: [
-                    if (beach.imageUrl != null)
-                      SizedBox(
-                        width: 120,
-                        height: 120,
-                        child: Hero(
-                          tag: 'beach_image_${beach.id}',
-                          child: CachedNetworkImage(
-                            imageUrl: beach.imageUrl!,
-                            fit: BoxFit.cover,
-                            httpHeaders: const {'Access-Control-Allow-Origin': '*'},
-                            placeholder: (context, url) => Container(
-                              color: Colors.grey[300],
-                              child: const Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            ),
-                            errorWidget: (context, url, error) => Container(
-                              color: Colors.grey[300],
-                              child: const Icon(Icons.error),
+              child: Stack(
+                children: [
+                  Container(
+                    height: 120,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 120,
+                          height: 120,
+                          child: beach.imageUrl != null && beach.imageUrl!.isNotEmpty
+                              ? (beach.imageUrl!.startsWith('assets/')
+                                  ? Image.asset(
+                                      beach.imageUrl!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        print('Error loading asset image in favorites: $error');
+                                        return Container(
+                                          color: Colors.grey[200],
+                                          child: const Icon(Icons.beach_access, size: 36),
+                                        );
+                                      },
+                                    )
+                                  : CachedNetworkImage(
+                                      imageUrl: beach.imageUrl!,
+                                      fit: BoxFit.cover,
+                                      httpHeaders: const {
+                                        'Access-Control-Allow-Origin': '*',
+                                        'Accept': 'image/*',
+                                      },
+                                      placeholder: (context, url) {
+                                        print('Loading favorite image from URL: $url');
+                                        return Container(
+                                          color: Colors.grey[200],
+                                          child: const Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        );
+                                      },
+                                      errorWidget: (context, url, error) {
+                                        print('Error loading favorite image: $error for URL: $url');
+                                        return Container(
+                                          color: Colors.grey[200],
+                                          child: const Icon(Icons.beach_access, size: 36),
+                                        );
+                                      },
+                                    ))
+                              : Container(
+                                  color: Colors.grey[200],
+                                  child: const Icon(Icons.beach_access, size: 36),
+                                ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        beach.name,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  beach.location,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 4,
+                                        horizontal: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: safetyColor.withValues(alpha: 0.2),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            _getSafetyIcon(
+                                              beach.currentConditions?.safetyStatus ?? 'unknown',
+                                            ),
+                                            size: 14,
+                                            color: safetyColor,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            beach.currentConditions?.safetyStatus.toUpperCase() ??
+                                                'UNKNOWN',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: safetyColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    if (beach.rating != null)
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.star,
+                                            size: 14,
+                                            color: Colors.amber,
+                                          ),
+                                          const SizedBox(width: 2),
+                                          Text(
+                                            beach.rating!.toString(),
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    beach.name,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () => _removeFromFavorites(beach),
-                                  child: const Icon(
-                                    Icons.favorite,
-                                    color: Colors.red,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              beach.location,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[600],
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 4,
-                                    horizontal: 8,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: safetyColor.withValues(alpha: 0.2),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        _getSafetyIcon(
-                                          beach.currentConditions?.safetyStatus ?? 'unknown',
-                                        ),
-                                        size: 14,
-                                        color: safetyColor,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        beach.currentConditions?.safetyStatus.toUpperCase() ??
-                                            'UNKNOWN',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                          color: safetyColor,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                if (beach.rating != null)
-                                  Row(
-                                    children: [
-                                      const Icon(
-                                        Icons.star,
-                                        size: 14,
-                                        color: Colors.amber,
-                                      ),
-                                      const SizedBox(width: 2),
-                                      Text(
-                                        beach.rating!.toString(),
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

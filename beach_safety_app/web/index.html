@@ -34,6 +34,12 @@
 
   <title>beach_safety_app</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Add meta tags for CORS and security -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Add CORS support -->
+  <meta http-equiv="Content-Security-Policy" content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;">
+  <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>

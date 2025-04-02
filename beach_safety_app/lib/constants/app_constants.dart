@@ -51,11 +51,37 @@ class AppConstants {
   static const String authErrorMessage = 'Authentication failed. Please log in again.';
 
   // Backend authentication settings
-  static bool _useRealBackendValue = true; // Default to using real backend
-  static bool get useRealBackend => _useRealBackendValue;
-  static set useRealBackend(bool value) {
-    _useRealBackendValue = value;
-    // In a real app, you would save this to SharedPreferences
+  static bool _useRealBackend = true; // Make this a private variable
+  static bool get useRealBackend => _useRealBackend; // Getter
+  static set useRealBackend(bool value) => _useRealBackend = value; // Setter
+  
+  // Image URLs
+  static const String defaultBeachImage = 'assets/images/beach.jpg';
+  static const String cloudinaryBaseUrl = 'https://res.cloudinary.com/duouemoop/image/upload/';
+  
+  static String getOptimizedImageUrl(String? imageUrl) {
+    if (imageUrl == null || imageUrl.isEmpty) {
+      return defaultBeachImage;
+    }
+    
+    // If it's an asset, return as is
+    if (imageUrl.startsWith('assets/')) {
+      return imageUrl;
+    }
+    
+    // If it's already a Cloudinary URL, optimize it
+    if (imageUrl.contains('cloudinary.com')) {
+      // Extract the ID part from the URL
+      final regex = RegExp(r'upload\/([^\/]+\/[^\/]+)$');
+      final match = regex.firstMatch(imageUrl);
+      if (match != null) {
+        // Add optimization parameters (w_500 = width 500px, q_auto = auto quality)
+        return '${cloudinaryBaseUrl}w_500,q_auto/${match.group(1)}';
+      }
+    }
+    
+    // Return the URL as is if not matching any known pattern
+    return imageUrl;
   }
   
   static const bool logApiCalls = true; // Set to false in production
@@ -78,6 +104,7 @@ class ApiEndpoints {
   static const String beaches = '$apiPrefix/beaches';
   static String beachDetails(String beachId) => '$apiPrefix/beaches/$beachId';
   static String beachConditions(String beachId) => '$apiPrefix/beaches/$beachId/conditions';
+  static const String beachesNearby = '$apiPrefix/beaches/nearby';
   static String favoriteBeach(String beachId) => '$apiPrefix/beaches/$beachId/favorite';
   static const String favoriteBeaches = '$apiPrefix/users/me/favorites';
   
@@ -90,7 +117,7 @@ class ApiEndpoints {
 }
 
 // Storage Keys moved to top level
-class StorageKeys {
+class StorageKeys { 
   static const String accessToken = 'access_token';
   static const String refreshToken = 'refresh_token';
   static const String userId = 'user_id';

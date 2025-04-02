@@ -68,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
         sortBy = 'view_count';
         break;
       case 'Nearby':
-        // Nearby logic handled in provider
+        sortBy = 'distance';
         break;
       case 'Safest':
         category = 'safe';

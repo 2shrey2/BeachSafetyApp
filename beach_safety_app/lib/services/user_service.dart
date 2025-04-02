@@ -26,7 +26,7 @@ class UserService {
   }
 
   // Update user profile
-  Future<User> updateUserProfile({
+  Future<bool> updateUserProfile({
     String? name,
     String? email,
     String? location,
@@ -42,7 +42,7 @@ class UserService {
       },
     );
     
-    return User.fromJson(response['data']);
+    return true;
   }
 
   // Get user notifications
@@ -56,14 +56,18 @@ class UserService {
   }
 
   // Mark notification as read
-  Future<void> markNotificationAsRead(String notificationId) async {
+  Future<bool> markNotificationAsRead(String notificationId) async {
     await _apiService.put(
       '${ApiEndpoints.userNotifications}/$notificationId/read',
     );
+    return true;
   }
 
   // Update user location
-  Future<void> updateUserLocation(double latitude, double longitude) async {
+  Future<void> updateUserLocation({
+    required double latitude,
+    required double longitude,
+  }) async {
     await _apiService.put(
       ApiEndpoints.userProfile,
       data: {

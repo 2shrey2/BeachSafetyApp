@@ -7,7 +7,11 @@
     "state": "Gujarat",
     "city": "Dwarka",
     "is_active": true,
-    "image_url": "https://example.com/dwarka_beach.jpg",
+    "image_url": "https://res.cloudinary.com/duouemoop/image/upload/v1743533411/1_tzjawp.jpg",
+    "is_favorite": false,
+    "rating": 4.5,
+    "view_count": 1200,
+    "location": "Dwarka, Gujarat",
     "id": 1
   },
   {
@@ -18,7 +22,11 @@
     "state": "Gujarat",
     "city": "Chorwad",
     "is_active": true,
-    "image_url": "https://example.com/chorwad_beach.jpg",
+    "image_url": "https://res.cloudinary.com/duouemoop/image/upload/v1743533364/2_vessfs.jpg",
+    "is_favorite": false,
+    "rating": 4.2,
+    "view_count": 800,
+    "location": "Chorwad, Gujarat",
     "id": 2
   },
   {
@@ -29,7 +37,11 @@
     "state": "Gujarat",
     "city": "Somnath",
     "is_active": true,
-    "image_url": "https://example.com/somnath_beach.jpg",
+    "image_url": "https://res.cloudinary.com/duouemoop/image/upload/v1743533381/3_w1nomj.jpg",
+    "is_favorite": false,
+    "rating": 4.7,
+    "view_count": 1500,
+    "location": "Somnath, Gujarat",
     "id": 3
   },
   {
@@ -40,7 +52,11 @@
     "state": "Maharashtra",
     "city": "Mumbai",
     "is_active": true,
-    "image_url": "https://example.com/juhu_beach.jpg",
+    "image_url": "https://res.cloudinary.com/duouemoop/image/upload/v1743533361/4_uy7al6.jpg",
+    "is_favorite": true,
+    "rating": 4.6,
+    "view_count": 2500,
+    "location": "Mumbai, Maharashtra",
     "id": 4
   },
   {
@@ -51,7 +67,11 @@
     "state": "Maharashtra",
     "city": "Mumbai",
     "is_active": true,
-    "image_url": "https://example.com/versova_beach.jpg",
+    "image_url": "https://res.cloudinary.com/duouemoop/image/upload/v1743533363/5_tbpfre.jpg",
+    "is_favorite": false,
+    "rating": 4.3,
+    "view_count": 900,
+    "location": "Mumbai, Maharashtra",
     "id": 5
   },
   {
@@ -62,7 +82,11 @@
     "state": "Goa",
     "city": "Baga",
     "is_active": true,
-    "image_url": "https://example.com/baga_beach.jpg",
+    "image_url": "https://res.cloudinary.com/duouemoop/image/upload/v1743533364/6_jptivp.jpg",
+    "is_favorite": true,
+    "rating": 4.8,
+    "view_count": 3000,
+    "location": "Baga, Goa",
     "id": 6
   },
   {
@@ -73,7 +97,11 @@
     "state": "Goa",
     "city": "Anjuna",
     "is_active": true,
-    "image_url": "https://example.com/anjuna_beach.jpg",
+    "image_url": "https://res.cloudinary.com/duouemoop/image/upload/v1743533363/7_wp1oic.jpg",
+    "is_favorite": false,
+    "rating": 4.5,
+    "view_count": 2200,
+    "location": "Anjuna, Goa",
     "id": 7
   },
   {
@@ -84,7 +112,11 @@
     "state": "Kerala",
     "city": "Kovalam",
     "is_active": true,
-    "image_url": "https://example.com/kovalam_beach.jpg",
+    "image_url": "https://res.cloudinary.com/duouemoop/image/upload/v1743533364/8_fkrs59.jpg",
+    "is_favorite": false,
+    "rating": 4.7,
+    "view_count": 1800,
+    "location": "Kovalam, Kerala",
     "id": 8
   },
   {
@@ -95,29 +127,41 @@
     "state": "Kerala",
     "city": "Varkala",
     "is_active": true,
-    "image_url": "https://example.com/varkala_beach.jpg",
+    "image_url": "https://res.cloudinary.com/duouemoop/image/upload/v1743533366/9_sn9meo.jpg",
+    "is_favorite": false,
+    "rating": 4.6,
+    "view_count": 1600,
+    "location": "Varkala, Kerala",
     "id": 9
   },
   {
     "name": "Marina Beach",
-    "description": "A beautiful beach in Chennai",
+    "description": "A beautiful beach in Chennai, one of the longest urban beaches in the world.",
     "latitude": 13.0499,
     "longitude": 80.282,
     "state": "Tamil Nadu",
     "city": "Chennai",
     "is_active": true,
-    "image_url": "https://example.com/marina_beach.jpg",
+    "image_url": "https://res.cloudinary.com/duouemoop/image/upload/v1743533368/10_be9bjb.jpg",
+    "is_favorite": true,
+    "rating": 4.4,
+    "view_count": 3500,
+    "location": "Chennai, Tamil Nadu",
     "id": 10
   },
   {
-    "name": "Elliot's Beach",
+    "name": "Elliot Beach",
     "description": "A calm and serene beach in Chennai, also known as Besant Nagar Beach.",
     "latitude": 12.9987,
     "longitude": 80.2715,
     "state": "Tamil Nadu",
     "city": "Chennai",
     "is_active": true,
-    "image_url": "https://example.com/elliots_beach.jpg",
+    "image_url": "https://res.cloudinary.com/duouemoop/image/upload/v1743533368/11_u9p7qs.jpg",
+    "is_favorite": false,
+    "rating": 4.3,
+    "view_count": 1400,
+    "location": "Chennai, Tamil Nadu",
     "id": 11
   },
   {
@@ -128,7 +172,11 @@
     "state": "West Bengal",
     "city": "Digha",
     "is_active": true,
-    "image_url": "https://example.com/digha_beach.jpg",
+    "image_url": "https://res.cloudinary.com/duouemoop/image/upload/v1743533380/12_ow1ppb.png",
+    "is_favorite": false,
+    "rating": 4.4,
+    "view_count": 2000,
+    "location": "Digha, West Bengal",
     "id": 12
   },
   {
@@ -139,7 +187,11 @@
     "state": "West Bengal",
     "city": "Mandarmani",
     "is_active": true,
-    "image_url": "https://example.com/mandarmani_beach.jpg",
+    "image_url": "https://res.cloudinary.com/duouemoop/image/upload/v1743533367/13_f2c1zq.webp",
+    "is_favorite": false,
+    "rating": 4.5,
+    "view_count": 1100,
+    "location": "Mandarmani, West Bengal",
     "id": 13
   },
   {
@@ -150,7 +202,11 @@
     "state": "Odisha",
     "city": "Puri",
     "is_active": true,
-    "image_url": "https://example.com/puri_beach.jpg",
+    "image_url": "https://res.cloudinary.com/duouemoop/image/upload/v1743533375/14_tnmnus.jpg",
+    "is_favorite": false,
+    "rating": 4.6,
+    "view_count": 2100,
+    "location": "Puri, Odisha",
     "id": 14
   },
   {
@@ -161,7 +217,11 @@
     "state": "Odisha",
     "city": "Chandipur",
     "is_active": true,
-    "image_url": "https://example.com/chandipur_beach.jpg",
+    "image_url": "https://res.cloudinary.com/duouemoop/image/upload/v1743533376/15_ktp4pa.jpg",
+    "is_favorite": false,
+    "rating": 4.5,
+    "view_count": 1300,
+    "location": "Chandipur, Odisha",
     "id": 15
   }
 ]

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../constants/app_theme.dart';
 import '../models/beach_model.dart';
+import '../utils/safety_utils.dart';
+import 'beach_image.dart';
 
 class BeachCard extends StatelessWidget {
   final Beach beach;
@@ -17,23 +19,15 @@ class BeachCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Determine safety status color
-    Color safetyColor;
-    switch (beach.currentConditions?.safetyStatus) {
-      case 'safe':
-        safetyColor = AppTheme.successColor;
-        break;
-      case 'moderate':
-        safetyColor = AppTheme.warningColor;
-        break;
-      case 'dangerous':
-        safetyColor = AppTheme.dangerColor;
-        break;
-      case 'closed':
-      default:
-        safetyColor = AppTheme.textLightColor;
-        break;
-    }
+    // Get safety status from the beach
+    String safetyStatus = beach.currentConditions?.safetyStatus ?? 'unknown';
+    
+    // Use SafetyUtils to get standardized color and display text
+    Color safetyColor = SafetyUtils.getSafetyColor(safetyStatus);
+    String safetyText = SafetyUtils.getSafetyDisplayText(safetyStatus);
+    
+    // Debug the safety status
+    print("Beach ${beach.name}: Original status='$safetyStatus', Display text='$safetyText'");
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
@@ -65,43 +59,13 @@ class BeachCard extends StatelessWidget {
                       topLeft: Radius.circular(12),
                       topRight: Radius.circular(12),
                     ),
-                    child: beach.imageUrl != null
-                        ? CachedNetworkImage(
-                            imageUrl: beach.imageUrl!,
-                            height: 160,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            httpHeaders: const {'Access-Control-Allow-Origin': '*'},
-                            useOldImageOnUrlChange: true,
-                            fadeInDuration: Duration.zero,
-                            memCacheWidth: 320,
-                            placeholder: (context, url) => Container(
-                              height: 160,
-                              color: Colors.grey[200],
-                              child: const Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            ),
-                            errorWidget: (context, url, error) {
-                              print('Error loading image: $error for URL: $url');
-                              return Container(
-                                height: 160,
-                                color: Colors.grey[200],
-                                child: Image.asset(
-                                  'assets/images/beach.jpeg',
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const Icon(Icons.beach_access, size: 64);
-                                  },
-                                ),
-                              );
-                            },
-                          )
-                        : Container(
-                            height: 160,
-                            color: Colors.grey[200],
-                            child: const Icon(Icons.beach_access),
-                          ),
+                    child: BeachImage(
+                      imageUrl: beach.imageUrl,
+                      beachId: beach.id,
+                      height: 160,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                   
                   // Favorite Button
@@ -137,9 +101,9 @@ class BeachCard extends StatelessWidget {
                       right: 0,
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 4),
-                        color: safetyColor.withValues(alpha: 0.8),
+                        color: safetyColor.withOpacity(0.8),
                         child: Text(
-                          beach.currentConditions!.safetyStatus.toUpperCase(),
+                          safetyText,
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Colors.white,

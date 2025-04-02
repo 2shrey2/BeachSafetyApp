@@ -27,19 +27,31 @@ class Beach {
 
   factory Beach.fromJson(Map<String, dynamic> json) {
     return Beach(
-      id: json['id'],
+      id: json['id'].toString(),
       name: json['name'],
-      location: json['location'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
+      location: json['location'] ?? '${json['city'] ?? ''}, ${json['state'] ?? ''}',
+      latitude: (json['latitude'] is String) 
+          ? double.parse(json['latitude']) 
+          : json['latitude'].toDouble(),
+      longitude: (json['longitude'] is String) 
+          ? double.parse(json['longitude']) 
+          : json['longitude'].toDouble(),
       imageUrl: json['image_url'],
-      description: json['description'],
+      description: json['description'] ?? '',
       isFavorite: json['is_favorite'] ?? false,
       currentConditions: json['current_conditions'] != null
           ? BeachConditions.fromJson(json['current_conditions'])
           : null,
-      viewCount: json['view_count'],
-      rating: json['rating'] != null ? json['rating'].toDouble() : null,
+      viewCount: json['view_count'] != null 
+          ? (json['view_count'] is String 
+              ? int.tryParse(json['view_count']) 
+              : json['view_count'])
+          : null,
+      rating: json['rating'] != null 
+          ? (json['rating'] is String 
+              ? double.tryParse(json['rating']) 
+              : json['rating'].toDouble()) 
+          : null,
     );
   }
 
@@ -114,16 +126,48 @@ class BeachConditions {
   });
 
   factory BeachConditions.fromJson(Map<String, dynamic> json) {
+    // Helper function to convert any value to double safely
+    double parseToDouble(dynamic value) {
+      if (value == null) return 0.0;
+      if (value is double) return value;
+      if (value is int) return value.toDouble();
+      if (value is String) {
+        return double.tryParse(value) ?? 0.0;
+      }
+      return 0.0;
+    }
+    
+    // Helper function to convert any value to int safely
+    int parseToInt(dynamic value) {
+      if (value == null) return 0;
+      if (value is int) return value;
+      if (value is double) return value.toInt();
+      if (value is String) {
+        return int.tryParse(value) ?? 0;
+      }
+      return 0;
+    }
+    
     return BeachConditions(
-      safetyStatus: json['safety_status'],
-      temperature: json['temperature'].toDouble(),
-      humidity: json['humidity'],
-      windSpeed: json['wind_speed'].toDouble(),
-      windDirection: json['wind_direction'],
-      waveHeight: json['wave_height'].toDouble(),
+      safetyStatus: json['safety_status'] ?? json['suitability_level'] ?? 'unknown',
+      temperature: parseToDouble(json['temperature'] ?? json['water_temperature']).isFinite ? 
+                   parseToDouble(json['temperature'] ?? json['water_temperature']) : 0.0,
+      humidity: parseToInt(json['humidity'] ?? 50), // Default humidity if not provided
+      windSpeed: parseToDouble(json['wind_speed']).isFinite ? 
+                 parseToDouble(json['wind_speed']) : 0.0,
+      windDirection: json['wind_direction'] ?? 'Unknown',
+      waveHeight: parseToDouble(json['wave_height']).isFinite ? 
+                  parseToDouble(json['wave_height']) : 0.0,
       waterQuality: json['water_quality'],
-      timestamp: DateTime.parse(json['timestamp']),
-      additionalData: json['additional_data'],
+      timestamp: json['timestamp'] != null 
+          ? (json['timestamp'] is String 
+              ? DateTime.parse(json['timestamp']) 
+              : DateTime.fromMillisecondsSinceEpoch(json['timestamp']))
+          : DateTime.now(),
+      additionalData: json['additional_data'] ?? {
+        'safety_score': json['safety_score'],
+        'warning_message': json['warning_message'],
+      },
     );
   }
 

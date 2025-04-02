@@ -394,53 +394,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 24),
 
                   // Settings Section
-                  Card(
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      children: [
-                        buildSettingsTile(
-                          context,
-                          'Notification Settings',
-                          Icons.notifications_outlined,
-                          () {
-                            // Navigate to notification settings
-                          },
-                        ),
-                        const Divider(height: 1),
-                        buildSettingsTile(
-                          context,
-                          'Security & Privacy',
-                          Icons.security_outlined,
-                          () {
-                            // Navigate to security settings
-                          },
-                        ),
-                        const Divider(height: 1),
-                        buildSettingsTile(
-                          context,
-                          'Help & Support',
-                          Icons.help_outline,
-                          () {
-                            // Navigate to help
-                          },
-                        ),
-                        if (kDebugMode) ...[
-                          const Divider(height: 1),
-                          buildSettingsTile(
-                            context,
-                            'Developer Options',
-                            Icons.developer_mode,
-                            () {
-                              _showDeveloperOptions(context);
-                            },
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
+                  _buildSettingsSection(),
                   const SizedBox(height: 24),
 
                   // Action Buttons
@@ -536,133 +490,78 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget buildSettingsTile(BuildContext context, String title, IconData icon, VoidCallback onPressed) {
-    return ListTile(
-      leading: Icon(icon, color: AppTheme.primaryColor),
-      title: Text(title),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-      onTap: onPressed,
+  Widget _buildSettingsSection() {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          _buildSettingItem(
+            title: 'My Favorites',
+            icon: Icons.favorite,
+            onTap: () => Navigator.pushNamed(context, AppRoutes.favorites),
+          ),
+          _buildDivider(),
+          _buildSettingItem(
+            title: 'Notifications',
+            icon: Icons.notifications,
+            onTap: () => Navigator.pushNamed(context, AppRoutes.notifications),
+          ),
+          _buildDivider(),
+          _buildSettingItem(
+            title: 'Logout',
+            icon: Icons.exit_to_app,
+            iconColor: Colors.red,
+            onTap: () => _showLogoutDialog(),
+            titleStyle: const TextStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  void _showDeveloperOptions(BuildContext context) {
-    bool useRealBackendValue = AppConstants.useRealBackend;
-    String backendUrl = AppConstants.baseUrl;
-    
+  Widget _buildSettingItem(
+      {required String title,
+      required IconData icon,
+      required VoidCallback onTap,
+      Color? iconColor,
+      TextStyle? titleStyle}) {
+    return ListTile(
+      leading: Icon(icon, color: iconColor),
+      title: Text(
+        title,
+        style: titleStyle,
+      ),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+      onTap: onTap,
+    );
+  }
+
+  Widget _buildDivider() {
+    return const Divider(height: 1);
+  }
+
+  void _showLogoutDialog() {
     showDialog(
       context: context,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const Text('Developer Options'),
-            content: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Backend Configuration',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 8),
-                  SwitchListTile(
-                    title: const Text('Use Real Backend'),
-                    subtitle: Text(useRealBackendValue 
-                      ? 'Using real backend API'
-                      : 'Using mock data'),
-                    value: useRealBackendValue,
-                    onChanged: (value) {
-                      setState(() {
-                        useRealBackendValue = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 8),
-                  const Text('Current Backend URL:'),
-                  const SizedBox(height: 4),
-                  Text(
-                    backendUrl,
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontFamily: 'monospace',
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  FutureBuilder<bool>(
-                    future: ApiService().testConnection(),
-                    builder: (context, snapshot) {
-                      return Row(
-                        children: [
-                          Container(
-                            width: 12,
-                            height: 12,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: snapshot.data == true
-                                  ? Colors.green
-                                  : Colors.red,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            snapshot.data == true
-                                ? 'Backend Connected'
-                                : 'Backend Unreachable',
-                            style: TextStyle(
-                              color: snapshot.data == true
-                                  ? Colors.green
-                                  : Colors.red,
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('CANCEL'),
-              ),
-              TextButton(
-                onPressed: () {
-                  // Update the app constants via static values
-                  AppConstants.useRealBackend = useRealBackendValue;
-                  
-                  // For demo purposes, just restart the app with an info message
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Backend settings updated to ${useRealBackendValue ? "use real backend" : "use mock data"}. '
-                        'Some screens may need to be reloaded.',
-                      ),
-                    ),
-                  );
-                  Navigator.of(context).pop();
-                  
-                  // Test connection after changing settings
-                  ApiService().testConnection().then((success) {
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            success 
-                              ? 'Successfully connected to backend!'
-                              : 'Backend connection failed. Still using mock data.',
-                          ),
-                          backgroundColor: success ? Colors.green : Colors.red,
-                        ),
-                      );
-                    }
-                  });
-                },
-                child: const Text('APPLY'),
-              ),
-            ],
-          );
-        },
+      builder: (context) => AlertDialog(
+        title: const Text('Logout'),
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: _logout,
+            child: const Text('Logout'),
+          ),
+        ],
       ),
     );
   }

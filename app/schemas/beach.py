@@ -12,6 +12,10 @@ class BeachBase(BaseModel):
     city: str
     is_active: bool = True
     image_url: Optional[str] = None
+    is_favorite: bool = False
+    rating: Optional[float] = None
+    view_count: Optional[int] = 0
+    location: Optional[str] = None
 
 
 # Properties to receive on beach creation
@@ -29,6 +33,10 @@ class BeachUpdate(BaseModel):
     city: Optional[str] = None
     is_active: Optional[bool] = None
     image_url: Optional[str] = None
+    is_favorite: Optional[bool] = None
+    rating: Optional[float] = None
+    view_count: Optional[int] = None
+    location: Optional[str] = None
 
 
 # Properties shared by models stored in DB
