@@ -106,7 +106,7 @@ class _MapScreenState extends State<MapScreen> {
           point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
           width: 40,
           height: 40,
-          builder: (context) => const Icon(Icons.location_pin, color: Colors.blue, size: 40),
+          child: const Icon(Icons.location_pin, color: Colors.blue, size: 40),
         ),
       );
     }
@@ -118,7 +118,7 @@ class _MapScreenState extends State<MapScreen> {
           point: LatLng(beach.latitude, beach.longitude),
           width: 40,
           height: 40,
-          builder: (context) => GestureDetector(
+          child: GestureDetector(
             onTap: () => _navigateToBeachDetails(beach),
             child: Icon(
               Icons.place,
