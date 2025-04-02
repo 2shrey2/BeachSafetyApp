@@ -16,19 +16,16 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  final MapController _mapController = MapController();
-  final List<Marker> _markers = [];
+  late MapController _mapController;
+  List<Marker> _markers = [];
   Position? _currentPosition;
   bool _isLoading = true;
   bool _isPermissionDenied = false;
-  
-  // Default camera position (you can adjust these coordinates)
-  static const LatLng _defaultLocation = LatLng(0, 0);
 
   @override
   void initState() {
     super.initState();
-    _loadBeachMarkers();
+    _mapController = MapController();
     _getCurrentLocation();
   }
 
@@ -106,8 +103,7 @@ class _MapScreenState extends State<MapScreen> {
     if (_currentPosition != null) {
       markers.add(
         Marker(
-          point:
-              LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+          point: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
           width: 40,
           height: 40,
           builder: (context) => const Icon(Icons.location_pin, color: Colors.blue, size: 40),
@@ -155,20 +151,6 @@ class _MapScreenState extends State<MapScreen> {
 
   void _navigateToBeachDetails(Beach beach) {
     AppRoutes.navigateToBeachDetails(context, beach.id);
-  }
-
-  void _loadBeachMarkers() {
-    // TODO: Load beach markers from your data source
-    setState(() {
-      _markers.add(
-        Marker(
-          point: _defaultLocation,
-          width: 80,
-          height: 80,
-          builder: (context) => const Icon(Icons.location_on, color: Colors.red, size: 40),
-        ),
-      );
-    });
   }
 
   // Zoom functions
@@ -240,7 +222,7 @@ class _MapScreenState extends State<MapScreen> {
               center: _currentPosition != null
                   ? LatLng(
                       _currentPosition!.latitude, _currentPosition!.longitude)
-                  : _defaultLocation,
+                  : LatLng(20.5937, 78.9629), // Default center: India
               zoom: 12.0,
             ),
             children: [

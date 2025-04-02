@@ -38,18 +38,16 @@ dependencies:
   http: ^1.1.0
   shared_preferences: ^2.1.0
   flutter_secure_storage: ^9.0.0
-  # google_maps_flutter: ^2.2.5 
-  flutter_map: ^5.0.0  # OpenStreetMap implementation for Flutter
-  latlong2: ^0.9.0     # Required for coordinates with flutter_map
-  url_launcher: ^6.1.10
-  dio: ^5.1.1
-  cached_network_image: ^3.2.3
-  intl: ^0.18.0
-  flutter_svg: ^2.0.5
+  flutter_map: ^6.1.0
+  latlong2: ^0.9.0
+  geolocator: ^10.1.0
+  dio: ^5.3.3
+  cached_network_image: ^3.3.0
+  intl: ^0.19.0
+  flutter_svg: ^2.0.9
   shimmer: ^3.0.0
   image_picker: ^0.8.7+4
-  geolocator: ^10.1.0  # Added for location services
-
+  url_launcher: ^6.1.10
 
 dev_dependencies:
   flutter_test:

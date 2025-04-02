@@ -200,6 +200,7 @@ packages:
     version: "5.0.0"
   flutter_map:
     dependency: "direct main"
+<<<<<<< HEAD
     description:
       name: flutter_map
       sha256: "5286f72f87deb132daa1489442d6cc46e986fc105cb727d9ae1b602b35b1d1f3"
@@ -208,12 +209,14 @@ packages:
     version: "5.0.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
+=======
+>>>>>>> 1483eb4fae965b6a705825047e465ca96c71b0d6
     description:
-      name: flutter_plugin_android_lifecycle
-      sha256: "5a1e6fb2c0561958d7e4c33574674bda7b77caaca7a33b758876956f2902eea3"
+      name: flutter_map
+      sha256: "87cc8349b8fa5dccda5af50018c7374b6645334a0d680931c1fe11bce88fa5bb"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.27"
+    version: "6.2.1"
   flutter_secure_storage:
     dependency: "direct main"
     description:
@@ -472,6 +475,17 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.1"
+<<<<<<< HEAD
+=======
+  logger:
+    dependency: transitive
+    description:
+      name: logger
+      sha256: be4b23575aac7ebf01f225a241eb7f6b5641eeaf43c6a8613510fc2f8cf187d1
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.0"
+>>>>>>> 1483eb4fae965b6a705825047e465ca96c71b0d6
   matcher:
     dependency: transitive
     description:
@@ -495,7 +509,11 @@ packages:
       sha256: bdb68674043280c3428e9ec998512fb681678676b3c54e773629ffe74419f8c7
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
     version: "1.15.0"
+=======
+    version: "1.16.0"
+>>>>>>> 1483eb4fae965b6a705825047e465ca96c71b0d6
   mgrs_dart:
     dependency: transitive
     description:
@@ -504,6 +522,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+<<<<<<< HEAD
   mime:
     dependency: transitive
     description:
@@ -512,6 +531,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
+=======
+>>>>>>> 1483eb4fae965b6a705825047e465ca96c71b0d6
   nested:
     dependency: transitive
     description:
@@ -788,7 +809,11 @@ packages:
       sha256: ba2aa5d8cc609d96bbb2899c28934f9e1af5cddbd60a827822ea467161eb54e7
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
     version: "2.1.2"
+=======
+    version: "2.1.4"
+>>>>>>> 1483eb4fae965b6a705825047e465ca96c71b0d6
   string_scanner:
     dependency: transitive
     description:
@@ -837,6 +862,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.1"
+<<<<<<< HEAD
   url_launcher:
     dependency: "direct main"
     description:
@@ -901,6 +927,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.4"
+=======
+>>>>>>> 1483eb4fae965b6a705825047e465ca96c71b0d6
   uuid:
     dependency: transitive
     description:

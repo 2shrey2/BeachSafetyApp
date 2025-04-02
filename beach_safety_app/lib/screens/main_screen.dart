@@ -7,6 +7,7 @@ import 'home/home_screen.dart';
 import 'profile/profile_screen.dart';
 import 'notifications/notifications_screen.dart';
 import 'map/map_screen.dart';
+import 'package:flutter_map/flutter_map.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -15,7 +16,8 @@ class MainScreen extends StatefulWidget {
   _MainScreenState createState() => _MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateMixin {
+class _MainScreenState extends State<MainScreen>
+    with SingleTickerProviderStateMixin {
   int _currentIndex = 0;
   DateTime? _lastBackPressTime;
   final List<Widget> _screens = const [
@@ -24,13 +26,13 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     NotificationsScreen(),
     ProfileScreen(),
   ];
-  
+
   final PageController _pageController = PageController();
 
   @override
   void initState() {
     super.initState();
-    
+
     // Load user data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserProvider>(context, listen: false).getUserProfile();
@@ -42,7 +44,7 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     _pageController.dispose();
     super.dispose();
   }
-  
+
   void _onTabTapped(int index) {
     // Only animate if we're not on the same tab
     if (index != _currentIndex) {
@@ -69,10 +71,10 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
           );
           return;
         }
-        
+
         // Double back to exit
         final now = DateTime.now();
-        if (_lastBackPressTime == null || 
+        if (_lastBackPressTime == null ||
             now.difference(_lastBackPressTime!) > const Duration(seconds: 2)) {
           _lastBackPressTime = now;
           ScaffoldMessenger.of(context).showSnackBar(
@@ -113,8 +115,10 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
                 children: [
                   _buildNavItem(0, Icons.home_outlined, Icons.home, 'Home'),
                   _buildNavItem(1, Icons.map_outlined, Icons.map, 'Map'),
-                  _buildNavItem(2, Icons.notifications_outlined, Icons.notifications, 'Alerts'),
-                  _buildNavItem(3, Icons.person_outline, Icons.person, 'Profile'),
+                  _buildNavItem(2, Icons.notifications_outlined,
+                      Icons.notifications, 'Alerts'),
+                  _buildNavItem(
+                      3, Icons.person_outline, Icons.person, 'Profile'),
                 ],
               ),
             ),
@@ -124,14 +128,17 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, IconData activeIcon, String label) {
+  Widget _buildNavItem(
+      int index, IconData icon, IconData activeIcon, String label) {
     final isSelected = _currentIndex == index;
     return InkWell(
       onTap: () => _onTabTapped(index),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppTheme.primaryColor.withValues(alpha: 0.1) : Colors.transparent,
+          color: isSelected
+              ? AppTheme.primaryColor.withValues(alpha: 0.1)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
@@ -155,4 +162,4 @@ class _MainScreenState extends State<MainScreen> with SingleTickerProviderStateM
       ),
     );
   }
-} 
+}
