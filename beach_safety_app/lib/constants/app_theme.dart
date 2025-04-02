@@ -5,19 +5,19 @@ class AppTheme {
   static const Color primaryColor = Color(0xFF1E88E5); // Blue 500
   static const Color primaryColorLight = Color(0xFF64B5F6); // Blue 300
   static const Color primaryDarkColor = Color(0xFF0D47A1); // Blue 900
-  
+
   // Secondary Colors
   static const Color accentColor = Color(0xFF03A9F4); // Light Blue 500
-  
+
   // Background Colors
   static const Color scaffoldBackgroundColor = Color(0xFFF5F5F5);
   static const Color cardColor = Colors.white;
-  
+
   // Text Colors
   static const Color textPrimaryColor = Color(0xFF212121); // Dark grey
   static const Color textSecondaryColor = Color(0xFF757575); // Grey
   static const Color textLightColor = Color(0xFFBDBDBD); // Light grey
-  
+
   // Indicator Colors
   static const Color successColor = Color(0xFF4CAF50); // Green
   static const Color warningColor = Color(0xFFFFC107); // Amber
@@ -119,8 +119,9 @@ class AppTheme {
           borderRadius: BorderRadius.circular(8.0),
           borderSide: const BorderSide(color: primaryColor),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
     );
   }
-} 
+}
