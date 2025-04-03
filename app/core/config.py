@@ -13,16 +13,19 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 60 * 24 * 8))  # 8 days
     
     # CORS configuration
+    # This list defines the origins that are allowed to make cross-origin requests to our API
+    # CORS (Cross-Origin Resource Sharing) is a security feature implemented by browsers
+    # that restricts web pages from making requests to a different domain than the one that served the page
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
-        "http://localhost:3000",
-        "http://localhost:8000",
-        "http://localhost:5000",
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:8000", 
-        "http://127.0.0.1:5000",
-        "http://10.0.2.2:3000",  # Android emulator special IP
-        "http://10.0.2.2:8000",  # Android emulator special IP
-        "http://10.0.2.2:5000",  # Android emulator special IP
+        "http://localhost:3000",  # React/Next.js default port
+        "http://localhost:8000",  # FastAPI/Django default port
+        "http://localhost:5000",  # Flask default port
+        "http://127.0.0.1:3000",  # Same as localhost but using IP
+        "http://127.0.0.1:8000",  # Same as localhost but using IP
+        "http://127.0.0.1:5000",  # Same as localhost but using IP
+        "http://192.0.0.4:8000",   # Android emulator special IP that maps to host machine's localhost
+        "http://192.168.1.100:8000",   # Android emulator special IP that maps to host machine's localhost
+        "http://192.168.1.100:5000",   # Android emulator special IP that maps to host machine's localhost
     ]
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)

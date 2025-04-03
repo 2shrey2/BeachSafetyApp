@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import '../models/beach_model.dart';
 import '../services/data_service.dart';
 import '../constants/app_constants.dart';

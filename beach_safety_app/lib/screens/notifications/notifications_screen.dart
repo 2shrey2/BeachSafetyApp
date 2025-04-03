@@ -9,7 +9,7 @@ import '../../routes/app_routes.dart';
 import '../../screens/beach/beach_details_screen.dart';
 
 class NotificationsScreen extends StatefulWidget {
-  const NotificationsScreen({Key? key}) : super(key: key);
+  const NotificationsScreen({super.key});
 
   @override
   _NotificationsScreenState createState() => _NotificationsScreenState();

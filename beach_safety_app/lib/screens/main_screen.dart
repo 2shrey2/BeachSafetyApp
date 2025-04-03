@@ -10,7 +10,7 @@ import 'map/map_screen.dart';
 import 'package:flutter_map/flutter_map.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   _MainScreenState createState() => _MainScreenState();

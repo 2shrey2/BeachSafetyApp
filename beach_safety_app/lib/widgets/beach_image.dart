@@ -12,14 +12,14 @@ class BeachImage extends StatelessWidget {
   final BorderRadius? borderRadius;
 
   const BeachImage({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.beachId,
     this.height = 160,
     this.width = double.infinity,
     this.fit = BoxFit.cover,
     this.borderRadius,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,34 +30,42 @@ class BeachImage extends StatelessWidget {
     print('BeachImage: Original URL: $imageUrl');
     print('BeachImage: Optimized URL: $optimizedUrl');
     
-    // Decide if we should use asset or network image
-    final useAsset = optimizedUrl.startsWith('assets/');
+    // Create a constrained box to enforce size limits
+    Widget imageContainer = SizedBox(
+      height: height,
+      width: width,
+      child: _buildImageWidget(optimizedUrl),
+    );
     
-    Widget imageWidget;
+    // Apply border radius if provided
+    if (borderRadius != null) {
+      return ClipRRect(
+        borderRadius: borderRadius!,
+        child: imageContainer,
+      );
+    }
+    
+    return imageContainer;
+  }
+  
+  Widget _buildImageWidget(String imageUrl) {
+    // Decide if we should use asset or network image
+    final useAsset = imageUrl.startsWith('assets/');
     
     if (useAsset) {
       // Use asset image
-      imageWidget = Image.asset(
-        optimizedUrl,
-        height: height,
-        width: width,
+      return Image.asset(
+        imageUrl,
         fit: fit,
         errorBuilder: (context, error, stackTrace) {
           print('Error loading asset image: $error');
-          return Container(
-            height: height,
-            width: width,
-            color: Colors.grey[200],
-            child: const Icon(Icons.beach_access, size: 64),
-          );
+          return _buildPlaceholder();
         },
       );
     } else {
       // Use cached network image
-      imageWidget = CachedNetworkImage(
-        imageUrl: optimizedUrl,
-        height: height,
-        width: width,
+      return CachedNetworkImage(
+        imageUrl: imageUrl,
         fit: fit,
         httpHeaders: const {
           'Access-Control-Allow-Origin': '*',
@@ -65,50 +73,37 @@ class BeachImage extends StatelessWidget {
           'Referrer-Policy': 'no-referrer',
         },
         cacheKey: 'beach_${beachId}_${width.toInt()}',
-        maxHeightDiskCache: (height * 2).toInt(),
-        maxWidthDiskCache: (width * 2).toInt(),
+        maxHeightDiskCache: height.isFinite ? (height * 2).toInt() : 320,
+        maxWidthDiskCache: width.isFinite ? (width * 2).toInt() : 480,
         useOldImageOnUrlChange: true,
         fadeInDuration: Duration.zero,
         placeholder: (context, url) {
           print('Loading image from URL: $url');
-          return Container(
-            height: height,
-            width: width,
-            color: Colors.grey[200],
-            child: const Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
+          return _buildLoadingPlaceholder();
         },
         errorWidget: (context, url, error) {
           print('Error loading image: $error for URL: $url');
-          // Try to load a fallback image
-          return Image.asset(
-            AppConstants.defaultBeachImage,
-            height: height,
-            width: width,
-            fit: fit,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                height: height,
-                width: width,
-                color: Colors.grey[200],
-                child: const Icon(Icons.beach_access, size: 64),
-              );
-            },
-          );
+          return _buildPlaceholder();
         },
       );
     }
-    
-    // Apply border radius if provided
-    if (borderRadius != null) {
-      return ClipRRect(
-        borderRadius: borderRadius!,
-        child: imageWidget,
-      );
-    }
-    
-    return imageWidget;
+  }
+  
+  Widget _buildPlaceholder() {
+    return Container(
+      color: Colors.grey[200],
+      child: const Center(
+        child: Icon(Icons.beach_access, size: 64, color: Colors.grey),
+      ),
+    );
+  }
+  
+  Widget _buildLoadingPlaceholder() {
+    return Container(
+      color: Colors.grey[200],
+      child: const Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
   }
 } 

@@ -11,11 +11,11 @@ class BeachCard extends StatelessWidget {
   final VoidCallback onFavoriteTap;
 
   const BeachCard({
-    Key? key,
+    super.key,
     required this.beach,
     required this.onTap,
     required this.onFavoriteTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class BeachCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -59,12 +59,16 @@ class BeachCard extends StatelessWidget {
                       topLeft: Radius.circular(12),
                       topRight: Radius.circular(12),
                     ),
-                    child: BeachImage(
-                      imageUrl: beach.imageUrl,
-                      beachId: beach.id,
+                    child: SizedBox(
                       height: 160,
                       width: double.infinity,
-                      fit: BoxFit.cover,
+                      child: BeachImage(
+                        imageUrl: beach.imageUrl,
+                        beachId: beach.id,
+                        height: 160,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                   
@@ -74,7 +78,7 @@ class BeachCard extends StatelessWidget {
                     right: 8,
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.8),
+                        color: Colors.white.withOpacity(0.8),
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(

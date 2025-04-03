@@ -9,7 +9,7 @@ import '../../providers/beach_provider.dart';
 import '../../routes/app_routes.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({Key? key}) : super(key: key);
+  const MapScreen({super.key});
 
   @override
   _MapScreenState createState() => _MapScreenState();
@@ -17,7 +17,7 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   late MapController _mapController;
-  List<Marker> _markers = [];
+  final List<Marker> _markers = [];
   Position? _currentPosition;
   bool _isLoading = true;
   bool _isPermissionDenied = false;

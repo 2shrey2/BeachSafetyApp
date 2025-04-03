@@ -7,11 +7,11 @@ class LoadingIndicator extends StatelessWidget {
   final bool withShimmer;
 
   const LoadingIndicator({
-    Key? key,
+    super.key,
     this.size = 40.0,
     this.message,
     this.withShimmer = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

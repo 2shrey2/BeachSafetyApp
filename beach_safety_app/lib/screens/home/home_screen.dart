@@ -8,9 +8,10 @@ import '../../widgets/loading_indicator.dart';
 import '../../screens/beach/beach_details_screen.dart';
 import 'widgets/category_tab.dart';
 import '../../providers/user_provider.dart';
+import '../../widgets/app_header.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -88,6 +89,24 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppHeader(
+        showBackButton: false,
+        showLogo: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search, color: Colors.white),
+            onPressed: () {
+              // Implement search
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.notifications, color: Colors.white),
+            onPressed: () {
+              Navigator.pushNamed(context, '/notifications');
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             builder: (context, userProvider, child) {
                               final userName = userProvider.user?.name ?? 'User';
                               return Text(
-                                'Hi, ${userName.isNotEmpty ? userName.split(' ').first : 'USER'} 👋',
+                                'Hey, ${userName.isNotEmpty ? userName.split(' ').first : 'USER'} ! What\'s the plan? 😎',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,

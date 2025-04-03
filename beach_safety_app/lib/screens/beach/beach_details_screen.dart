@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../constants/app_theme.dart';
 import '../../models/beach_model.dart';
 import '../../providers/beach_provider.dart';
@@ -12,9 +13,9 @@ class BeachDetailsScreen extends StatefulWidget {
   final String beachId;
 
   const BeachDetailsScreen({
-    Key? key,
+    super.key,
     required this.beachId,
-  }) : super(key: key);
+  });
 
   @override
   State<BeachDetailsScreen> createState() => _BeachDetailsScreenState();
@@ -552,7 +553,9 @@ class _BeachDetailsScreenState extends State<BeachDetailsScreen> with AutomaticK
       padding: const EdgeInsets.all(16),
       child: ElevatedButton(
         onPressed: () {
-          // Implement booking functionality
+          // Redirect to Airbnb website for booking
+          final url = 'https://www.airbnb.co.in/';
+          launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppTheme.primaryColor,

@@ -123,7 +123,7 @@ class BeachService {
       }
     } catch (e) {
       print('Error in getNearbyBeaches: $e');
-      throw e;
+      rethrow;
     }
   }
 

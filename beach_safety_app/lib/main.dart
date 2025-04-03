@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'constants/app_theme.dart';
@@ -9,11 +7,11 @@ import 'providers/beach_provider.dart';
 import 'providers/user_provider.dart';
 import 'routes/app_routes.dart';
 import 'constants/app_constants.dart';
-import 'screens/splash_screen.dart';
 
 // Detect web platform
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'dart:ui_web' as ui_web;
+// Conditionally import web-specific libraries
+// ignore: uri_does_not_exist
+import 'web_imports.dart' if (dart.library.io) 'mobile_imports.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +27,7 @@ void main() {
     // Disable CORS checks for local development
     // Note: In production, you should use proper CORS headers on your server
     // or use a CORS proxy
+    configureWebSettings(); // This function is defined in web_imports.dart
 
     // Set platform override to prevent certain platform-specific issues
     debugDefaultTargetPlatformOverride = TargetPlatform.macOS;

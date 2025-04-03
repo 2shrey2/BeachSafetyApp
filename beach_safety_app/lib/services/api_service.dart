@@ -114,7 +114,7 @@ class ApiService {
       // First try the health endpoint
       try {
         final healthDio = Dio(BaseOptions(
-          baseUrl: '${AppConstants.baseUrl}',
+          baseUrl: AppConstants.baseUrl,
           connectTimeout: const Duration(seconds: 30),
           receiveTimeout: const Duration(seconds: 30),
         ));
@@ -138,7 +138,7 @@ class ApiService {
           try {
             print('Trying /docs endpoint...');
             final docsDio = Dio(BaseOptions(
-              baseUrl: '${AppConstants.baseUrl}',
+              baseUrl: AppConstants.baseUrl,
               connectTimeout: const Duration(seconds: 30),
               receiveTimeout: const Duration(seconds: 30),
             ));

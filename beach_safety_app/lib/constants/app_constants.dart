@@ -16,11 +16,12 @@ class AppConstants {
         // For web in development, use the current hostname with the correct port
         return 'http://127.0.0.1:8000';  // Removed /api/v1 since it will be added in endpoints
       } else if (Platform.isAndroid) {
-        // For Android emulator, use 10.0.2.2 which maps to host's localhost
-        return 'http://10.0.2.2:8000';
+        // Android devices need to use the host machine's IP address 
+        // This is your COMPUTER'S IP on the local network (not the phone's IP)
+        return 'http://10.25.23.12:8000';  // Computer's actual IP address
       } else {
-        // For iOS simulator and physical devices
-        return 'http://127.0.0.1:8000';
+        // For iOS devices
+        return 'http://10.25.23.12:8000';  // Computer's actual IP address
       }
     } else {
       // Production URLs - replace with your actual production backend URL
