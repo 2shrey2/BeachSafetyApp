@@ -135,7 +135,6 @@ Beach Safety App/
    ```
 
 3. Configure environment:
-   - Add Google Maps API key
    - Update backend URL in constants
 
 4. Run the app:
