@@ -1,127 +1,222 @@
 # Beach Safety App
 
-A Flutter and FastAPI application for monitoring beach conditions and safety.
+A comprehensive beach safety monitoring system that provides real-time updates about beach conditions, weather forecasts, and safety alerts. The application consists of a Flutter-based mobile frontend and a FastAPI-powered backend.
 
-## Project Structure
+![Beach Safety App](beach_safety_app/assets/images/beach.jpg)
 
-- `app/` - FastAPI backend
-- `beach_safety_app/` - Flutter frontend
+## Project Overview
 
-## Quick Start Guide
+Beach Safety App helps users make informed decisions about beach visits by providing:
+- Real-time safety status of beaches
+- Current weather and ocean conditions
+- Crowd level monitoring
+- Personalized alerts and notifications
+- Interactive maps with nearby beach discovery
 
-For Windows users, simply run the provided batch script to start both backend and frontend:
+## System Architecture
+
+The project follows a modern client-server architecture:
 
 ```
-start_app.bat
+Beach Safety App/
+├── beach_safety_app/    # Flutter Mobile Frontend
+└── app/                 # FastAPI Backend
 ```
 
-This will start:
-- FastAPI backend at http://127.0.0.1:8000/api/v1
-- Flutter web frontend at http://127.0.0.1:57681
+### Frontend (Flutter)
+- Cross-platform mobile application
+- Material Design UI/UX
+- Offline-first architecture
+- Real-time data synchronization
+- Location-based services
 
-## Setup Instructions (Manual)
+### Backend (FastAPI)
+- RESTful API architecture
+- PostgreSQL database
+- Redis caching
+- JWT authentication
+- Background task scheduling
+
+## Tech Stack
+
+### Mobile Frontend
+- **Framework**: Flutter 3.x
+- **Language**: Dart
+- **State Management**: Provider
+- **Maps**: Google Maps Flutter
+- **Storage**: SharedPreferences
+- **HTTP Client**: Dio
+- **Image Caching**: Cached Network Image
+
+### Backend
+- **Framework**: FastAPI
+- **Language**: Python 3.8+
+- **Database**: PostgreSQL
+- **Caching**: Redis
+- **Task Scheduler**: APScheduler
+- **Authentication**: JWT + Bcrypt
+- **API Documentation**: OpenAPI/Swagger
+- **Geolocation**: GeoPy
+
+## Key Features
+
+### Beach Monitoring
+- Live safety status tracking
+- Weather condition updates
+- Wave and tide information
+- Beach crowd monitoring
+- Historical data analysis
+
+### User Features
+- User authentication and profiles
+- Favorite beaches management
+- Customizable alert preferences
+- Location-based recommendations
+- Offline data access
+
+### Admin Features
+- Safety status management
+- Beach information updates
+- User management
+- Analytics dashboard
+- System monitoring
+
+## Getting Started
 
 ### Prerequisites
-
-- Python 3.8+ with pip
-- Flutter SDK installed
-- Chrome browser (for Flutter web)
+- Python 3.8+
+- Flutter 3.x
+- PostgreSQL
+- Redis
+- Git
 
 ### Backend Setup
-
-1. Navigate to the backend directory:
-   ```
+1. Navigate to backend directory:
+   ```bash
    cd app
    ```
 
-2. Create a virtual environment:
-   ```
+2. Create and activate virtual environment:
+   ```bash
    python -m venv venv
+   source venv\Scripts\activate  # For Windows
    ```
 
-3. Activate the virtual environment:
-   - On Windows:
-     ```
-     venv\Scripts\activate
-     ```
-   - On macOS/Linux:
-     ```
-     source venv/bin/activate
-     ```
-
-4. Install dependencies:
-   ```
+3. Install dependencies:
+   ```bash
    pip install -r requirements.txt
    ```
 
-5. Run the backend:
+4. Configure environment variables:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configurations
    ```
-   uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+
+5. Run migrations:
+   ```bash
+   alembic upgrade head
    ```
-   
-   The API will be available at: `http://127.0.0.1:8000/api/v1/`
-   API documentation: `http://127.0.0.1:8000/docs`
+
+6. Start the server:
+   ```bash
+   python run.py
+   ```
 
 ### Frontend Setup
-
-1. Navigate to the frontend directory:
-   ```
+1. Navigate to frontend directory:
+   ```bash
    cd beach_safety_app
    ```
 
-2. Get Flutter dependencies:
-   ```
+2. Install Flutter dependencies:
+   ```bash
    flutter pub get
    ```
 
-3. Run the Flutter app on Web:
+3. Configure environment:
+   - Add Google Maps API key
+   - Update backend URL in constants
+
+4. Run the app:
+   ```bash
+   flutter run
    ```
-   flutter run -d web-server --web-port 57681
-   ```
-   
-   The web app will be available at: `http://127.0.0.1:57681`
 
-## URL Configuration
+## Development
 
-This application is configured to work with the following URLs:
+### Backend Development
+- API documentation available at `/docs` or `/redoc`
+- Run tests: `pytest`
+- Code formatting: `black .`
+- Linting: `flake8`
 
-- Backend API: `http://127.0.0.1:8000/api/v1`
-- API Documentation: `http://127.0.0.1:8000/docs`
-- Frontend: `http://127.0.0.1:57681`
+### Frontend Development
+- Run tests: `flutter test`
+- Build APK: `flutter build apk --release`
+- Web development: `flutter run -d chrome`
 
-## Troubleshooting
+## Deployment
 
-### CORS Issues
+### Backend Deployment
+- Supports Docker containerization
+- Can be deployed to any cloud platform
+- Requires PostgreSQL and Redis instances
+- Environment-specific configurations
 
-If you encounter CORS issues:
+### Frontend Deployment
+- Android: Generate signed APK
+- iOS: Deploy through App Store
+- Web: Static file hosting
 
-1. Ensure the backend is running at `http://127.0.0.1:8000`
-2. Verify that the CORS middleware in `app/main.py` includes your frontend URL
-3. Check that the frontend URL in `beach_safety_app/lib/utils/cors_proxy.dart` matches your actual frontend URL
+## Security Measures
 
-### Connection Issues
+- JWT-based authentication
+- Password hashing
+- API key protection
+- SSL/TLS encryption
+- Input validation
+- Rate limiting
+- CORS configuration
 
-Use the built-in diagnostic tools:
+## Performance Optimizations
 
-1. Check the console logs when starting the app for connection status
-2. Look for any errors related to backend connectivity
+- Database query optimization
+- Redis caching layer
+- Image optimization
+- Lazy loading
+- Background sync
+- Efficient state management
 
-### Browser Console Errors
+## Contributing
 
-For CORS or API connection issues in the web frontend:
-1. Open Chrome DevTools (F12)
-2. Check the Console and Network tabs for error details
+1. Fork the repository
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
-### Common Errors
+## Project Structure
 
-1. **"Address already in use" error**
-   - Another process might be using port 8000 or 57681
-   - Find and stop the process, or use different ports
+```
+BeachSafetyApp/
+├── app/                    # Backend
+│   ├── api/               # API endpoints
+│   ├── core/              # Core functionality
+│   ├── crud/              # Database operations
+│   ├── db/                # Database models
+│   ├── schemas/           # Pydantic schemas
+│   └── services/          # Business logic
+│
+└── beach_safety_app/      # Frontend
+    ├── lib/               # Dart source code
+    ├── assets/            # Static assets
+    ├── android/           # Android specific
+    └── ios/               # iOS specific
+```
 
-2. **"Cannot connect to backend" error**
-   - Make sure the FastAPI backend is running
-   - Check that the API URL in `app_constants.dart` is correct
 
-3. **API not accessible at `/api/v1` path**
-   - Verify settings.API_V1_STR in `app/core/config.py` is set to `/api/v1`
-   - Check that the API router is correctly mounted in `app/main.py`
+## Acknowledgments
+
+- Weather data providers
+- Map service providers
