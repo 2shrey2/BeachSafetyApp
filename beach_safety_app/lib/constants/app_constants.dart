@@ -8,25 +8,7 @@ class AppConstants {
   
   // API Base URL - Use window.location.hostname when running on web
   static String get baseUrl {
-    // Detect development vs production environment
-    const bool isDevelopment = true; // Set to false for production
-    
-    if (isDevelopment) {
-      if (kIsWeb) {
-        // For web in development, use the current hostname with the correct port
-        return 'http://127.0.0.1:8000';  // Removed /api/v1 since it will be added in endpoints
-      } else if (Platform.isAndroid) {
-        // Android devices need to use the host machine's IP address 
-        // This is your COMPUTER'S IP on the local network (not the phone's IP)
-        return 'http://10.25.23.12:8000';  // Computer's actual IP address
-      } else {
-        // For iOS devices
-        return 'http://10.25.23.12:8000';  // Computer's actual IP address
-      }
-    } else {
-      // Production URLs - replace with your actual production backend URL
-      return 'https://your-production-backend.com';  // Replace with your actual production URL
-    }
+    return 'https://beachsafetyapp.onrender.com'; // Your deployed FastAPI backend
   }
   
   // Default Values
