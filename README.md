@@ -2,7 +2,6 @@
 
 A comprehensive beach safety monitoring system that provides real-time updates about beach conditions, weather forecasts, and safety alerts. The application consists of a Flutter-based mobile frontend and a FastAPI-powered backend.
 
-![Beach Safety App](beach_safety_app/assets/images/beach.jpg)
 
 ## Project Overview
 
@@ -135,7 +134,6 @@ Beach Safety App/
    ```
 
 3. Configure environment:
-   - Add Google Maps API key
    - Update backend URL in constants
 
 4. Run the app:
@@ -187,14 +185,6 @@ Beach Safety App/
 - Lazy loading
 - Background sync
 - Efficient state management
-
-## Contributing
-
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
 
 ## Project Structure
 
