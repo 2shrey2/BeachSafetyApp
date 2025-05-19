@@ -154,11 +154,15 @@ Beach Safety App/
 - Can be deployed to any cloud platform
 - Requires PostgreSQL and Redis instances
 - Environment-specific configurations
+- API Base URL: `https://beachsafetyapp.onrender.com/`
+- API Documentation: `https://beachsafetyapp.onrender.com/docs`
 
 ### Frontend Deployment
 - Android: Generate signed APK
 - iOS: Deploy through App Store
 - Web: Static file hosting
+- [Download APK (v1.0.0)](C:\Users\DELL\Desktop\PROJECTS\BeachSafetyApp\beach_safety_app\build\app\outputs\flutter-apk\app-release.apk)
+
 
 ## Security Measures
 
