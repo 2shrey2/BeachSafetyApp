@@ -3,9 +3,9 @@
 A comprehensive beach safety monitoring system that provides real-time updates about beach conditions, weather forecasts, and safety alerts. The application consists of a Flutter-based mobile frontend and a FastAPI-powered backend.
 
 <p align="center">
-<img src="C:/Users/DELL/Desktop/PROJECTS/BeachSafetyApp/screenshots/splash_screen.png" width="200" alt="Splash Screen"/>
-<img src="C:/Users/DELL/Desktop/PROJECTS/BeachSafetyApp/screenshots/details_features.png" width="200" alt="Beach Details"/>
-<img src="C:/Users/DELL/Desktop/PROJECTS/BeachSafetyApp/screenshots/map_details.png" width="200" alt="Map View"/>
+<img src="./screenshots/splash_screen.png" width="200" alt="Splash Screen"/>
+<img src="./screenshots/details_features.png" width="200" alt="Beach Details"/>
+<img src="./screenshots/map_details.png" width="200" alt="Map View"/>
 </p>
 
 ## Project Overview
