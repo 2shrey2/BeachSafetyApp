@@ -158,11 +158,9 @@ Beach Safety App/
 - API Documentation: `https://beachsafetyapp.onrender.com/docs`
 
 ### Frontend Deployment
-- Android: Generate signed APK
+- Android: Generate signed APK -> visit at "beach_safety_app/releases"
 - iOS: Deploy through App Store
 - Web: Static file hosting
-- [Download APK (v1.0.0)]("https://github.com/2shrey2/BeachSafetyApp/blob/main/beach_safety_app/releases/app-release.apk")
-
 
 ## Security Measures
 
