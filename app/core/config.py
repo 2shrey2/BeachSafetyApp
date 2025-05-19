@@ -17,7 +17,8 @@ class Settings(BaseSettings):
     # CORS (Cross-Origin Resource Sharing) is a security feature implemented by browsers
     # that restricts web pages from making requests to a different domain than the one that served the page
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = [
-        "https://beachsafetyapp.onrender.com"  
+        "http://127.0.0.1:8000/"
+        # "https://beachsafetyapp.onrender.com"  
     ]
 
     @validator("BACKEND_CORS_ORIGINS", pre=True)

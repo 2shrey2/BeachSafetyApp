@@ -8,7 +8,8 @@ class AppConstants {
   
   // API Base URL - Use window.location.hostname when running on web
   static String get baseUrl {
-    return 'https://beachsafetyapp.onrender.com'; // Your deployed FastAPI backend
+    return 'http://127.0.0.1:8000'; // Localhost for development
+    // return 'https://beachsafetyapp.onrender.com'; // Your deployed FastAPI backend
   }
   
   // Default Values

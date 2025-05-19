@@ -2,6 +2,11 @@
 
 A comprehensive beach safety monitoring system that provides real-time updates about beach conditions, weather forecasts, and safety alerts. The application consists of a Flutter-based mobile frontend and a FastAPI-powered backend.
 
+<p align="center">
+<img src="C:/Users/DELL/Desktop/PROJECTS/BeachSafetyApp/screenshots/splash_screen.png" width="200" alt="Splash Screen"/>
+<img src="C:/Users/DELL/Desktop/PROJECTS/BeachSafetyApp/screenshots/details_features.png" width="200" alt="Beach Details"/>
+<img src="C:/Users/DELL/Desktop/PROJECTS/BeachSafetyApp/screenshots/map_details.png" width="200" alt="Map View"/>
+</p>
 
 ## Project Overview
 
@@ -42,7 +47,7 @@ Beach Safety App/
 - **Framework**: Flutter 3.x
 - **Language**: Dart
 - **State Management**: Provider
-- **Maps**: Google Maps Flutter
+- **Maps**: Open Street Map(OSM)
 - **Storage**: SharedPreferences
 - **HTTP Client**: Dio
 - **Image Caching**: Cached Network Image
@@ -117,10 +122,11 @@ Beach Safety App/
    alembic upgrade head
    ```
 
-6. Start the server:
+6. Start server:
    ```bash
-   python run.py
+   uvicorn main:app --reload
    ```
+
 
 ### Frontend Setup
 1. Navigate to frontend directory:
@@ -140,19 +146,6 @@ Beach Safety App/
    ```bash
    flutter run
    ```
-
-## Development
-
-### Backend Development
-- API documentation available at `/docs` or `/redoc`
-- Run tests: `pytest`
-- Code formatting: `black .`
-- Linting: `flake8`
-
-### Frontend Development
-- Run tests: `flutter test`
-- Build APK: `flutter build apk --release`
-- Web development: `flutter run -d chrome`
 
 ## Deployment
 
@@ -206,7 +199,7 @@ BeachSafetyApp/
 ```
 
 
-## Acknowledgments
+## 👥 Authors
 
-- Weather data providers
-- Map service providers
+- Shrey Ingole - [GitHub Profile](https://github.com/2shrey2)
+- Sanskruti Avhale - [GitHub Profile](https://github.com/SanskrutiA)
