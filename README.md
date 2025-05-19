@@ -161,7 +161,7 @@ Beach Safety App/
 - Android: Generate signed APK
 - iOS: Deploy through App Store
 - Web: Static file hosting
-- [Download APK (v1.0.0)]("C:\Users\DELL\Desktop\PROJECTS\BeachSafetyApp\beach_safety_app\build\app\outputs\flutter-apk\app-release.apk")
+- [Download APK (v1.0.0)]("https://github.com/2shrey2/BeachSafetyApp/blob/main/beach_safety_app/releases/app-release.apk")
 
 
 ## Security Measures
